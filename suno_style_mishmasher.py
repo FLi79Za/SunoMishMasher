@@ -54,6 +54,7 @@ APP_DIR = Path.home() / ".suno_style_mishmasher"
 DB_PATH = APP_DIR / "style_database.json"
 PRESET_PATH = APP_DIR / "last_settings.json"
 MAX_PROMPT_CHARS = 1000
+PROMPT_HISTORY_LIMIT = 10
 
 
 DEFAULT_DB = {
@@ -791,6 +792,7 @@ class GeneratorSettings:
     avoid_count: int = 1
     seed: str = ""
     base_prompt: str = ""
+    negative_prompt: str = ""
     auto_match_base_style: bool = True
     simple_append_only: bool = True
     use_associations: bool = True
@@ -811,6 +813,11 @@ class Mishmasher(QMainWindow):
 
         self.db = self.load_db()
         self.settings = GeneratorSettings()
+        self.prompt_history: List[dict] = []
+        self._last_generated_picked: Dict[str, List[str]] | None = None
+        self._last_generation_settings: GeneratorSettings | None = None
+        self._last_generation_removed_by_negative: List[str] = []
+        self._suspend_negative_regen = False
 
         tabs = QTabWidget()
         tabs.addTab(self.build_generator_tab(), "Generator")
@@ -906,6 +913,17 @@ class Mishmasher(QMainWindow):
         self.base_prompt_edit.setMaximumHeight(110)
         self.base_prompt_edit.textChanged.connect(self.generate_prompt)
         start_layout.addWidget(self.base_prompt_edit)
+
+        start_layout.addWidget(QLabel("Negative prompt / never include"))
+        self.negative_prompt_edit = QPlainTextEdit()
+        self.negative_prompt_edit.setPlaceholderText(
+            "Examples:\n"
+            "bagpipes, ukulele, accordion\n"
+            "no EDM drops; avoid comedy vocals; without theremin"
+        )
+        self.negative_prompt_edit.setMaximumHeight(80)
+        self.negative_prompt_edit.textChanged.connect(self.on_negative_prompt_changed)
+        start_layout.addWidget(self.negative_prompt_edit)
 
         style_row = QFormLayout()
         self.base_style_combo = QComboBox()
@@ -1058,14 +1076,72 @@ class Mishmasher(QMainWindow):
         right = QVBoxLayout()
         root.addLayout(right, 2)
 
+        main_output_group = QGroupBox("Suno main prompt")
+        main_output_layout = QVBoxLayout(main_output_group)
+
         self.output = QPlainTextEdit()
         self.output.setPlaceholderText("Generated Suno style prompt appears here.")
         self.output.textChanged.connect(self.update_count)
-        right.addWidget(self.output, 1)
+        main_output_layout.addWidget(self.output, 1)
 
         self.char_label = QLabel("0 / 1000")
         self.char_label.setAlignment(Qt.AlignRight)
-        right.addWidget(self.char_label)
+        main_output_layout.addWidget(self.char_label)
+
+        main_button_row = QHBoxLayout()
+        copy_main_btn = QPushButton("Copy main prompt")
+        copy_main_btn.clicked.connect(self.copy_prompt)
+        clear_main_btn = QPushButton("Clear main prompt")
+        clear_main_btn.clicked.connect(self.output.clear)
+        main_button_row.addWidget(copy_main_btn)
+        main_button_row.addWidget(clear_main_btn)
+        main_button_row.addStretch(1)
+        main_output_layout.addLayout(main_button_row)
+
+        right.addWidget(main_output_group, 1)
+
+        negative_output_group = QGroupBox("Suno negative prompt")
+        negative_output_layout = QVBoxLayout(negative_output_group)
+
+        self.negative_output = QPlainTextEdit()
+        self.negative_output.setPlaceholderText("Generated negative prompt appears here. Copy this into Suno's separate negative prompt field if you want to use it.")
+        self.negative_output.setMaximumHeight(110)
+        negative_output_layout.addWidget(self.negative_output)
+
+        negative_button_row = QHBoxLayout()
+        copy_negative_btn = QPushButton("Copy negative prompt")
+        copy_negative_btn.clicked.connect(self.copy_negative_prompt)
+        clear_negative_btn = QPushButton("Clear negative box")
+        clear_negative_btn.clicked.connect(self.negative_output.clear)
+        negative_button_row.addWidget(copy_negative_btn)
+        negative_button_row.addWidget(clear_negative_btn)
+        negative_button_row.addStretch(1)
+        negative_output_layout.addLayout(negative_button_row)
+
+        right.addWidget(negative_output_group)
+
+        history_group = QGroupBox("Prompt history")
+        history_layout = QVBoxLayout(history_group)
+
+        self.history_list = QListWidget()
+        self.history_list.setMaximumHeight(150)
+        self.history_list.itemDoubleClicked.connect(self.restore_history_item)
+        history_layout.addWidget(self.history_list)
+
+        history_buttons = QHBoxLayout()
+        restore_history_btn = QPushButton("Restore selected")
+        restore_history_btn.clicked.connect(self.restore_selected_history_item)
+        copy_history_btn = QPushButton("Copy selected")
+        copy_history_btn.clicked.connect(self.copy_selected_history_item)
+        clear_history_btn = QPushButton("Clear history")
+        clear_history_btn.clicked.connect(self.clear_prompt_history)
+        history_buttons.addWidget(restore_history_btn)
+        history_buttons.addWidget(copy_history_btn)
+        history_buttons.addWidget(clear_history_btn)
+        history_buttons.addStretch(1)
+        history_layout.addLayout(history_buttons)
+
+        right.addWidget(history_group)
 
         self.breakdown = QTextEdit()
         self.breakdown.setReadOnly(True)
@@ -2109,6 +2185,7 @@ class Mishmasher(QMainWindow):
             avoid_count=self.count_spins["avoid_count"].value(),
             seed=self.seed_box.text().strip(),
             base_prompt=self.base_prompt_edit.toPlainText().strip() if hasattr(self, "base_prompt_edit") else "",
+            negative_prompt=self.negative_prompt_edit.toPlainText().strip() if hasattr(self, "negative_prompt_edit") else "",
             auto_match_base_style=self.auto_match_check.isChecked() if hasattr(self, "auto_match_check") else True,
             simple_append_only=self.append_only_check.isChecked() if hasattr(self, "append_only_check") else True,
             use_associations=self.use_assoc_check.isChecked(),
@@ -2366,6 +2443,316 @@ class Mishmasher(QMainWindow):
                 chosen.append(candidate)
         return chosen
 
+
+    def parse_negative_terms(self, raw_text: str) -> List[str]:
+        """Turn the negative prompt box into clean exclusion terms.
+
+        Supports:
+        - one item per line
+        - comma-separated values
+        - semicolon-separated values
+        - phrases like "avoid bagpipes", "no ukulele", "without accordion"
+        """
+        if not raw_text:
+            return []
+
+        parts = re.split(r"[\n,;|]+", raw_text)
+        terms: List[str] = []
+        seen = set()
+
+        for part in parts:
+            item = re.sub(r"\s+", " ", part.strip().strip("'\""))
+            if not item:
+                continue
+
+            item = re.sub(r"^(avoid|no|without)\s+", "", item, flags=re.IGNORECASE).strip()
+            item = item.strip(" .,:;")
+            if not item:
+                continue
+
+            key = item.casefold()
+            if key not in seen:
+                seen.add(key)
+                terms.append(item)
+
+        return terms
+
+    def item_matches_negative_term(self, item: str, negative_terms: List[str]) -> bool:
+        text = str(item).casefold()
+        for term in negative_terms:
+            needle = term.casefold()
+            if not needle:
+                continue
+            # Exact match or practical substring match.
+            # Example: "bagpipe" excludes "bagpipes"; "accordion" excludes "live accordion".
+            if needle == text or needle in text or text in needle:
+                return True
+        return False
+
+    def apply_negative_filters(self, picked: Dict[str, List[str]], negative_terms: List[str]) -> tuple[Dict[str, List[str]], List[str]]:
+        """Remove generated items matching the negative prompt.
+
+        The user's own base prompt is not modified. This only prevents the app from adding
+        unwanted generated extras. The negative prompt is silent and does not add
+        explicit avoid notes to the final Suno prompt.
+        """
+        if not negative_terms:
+            return picked, []
+
+        filtered: Dict[str, List[str]] = {}
+        removed: List[str] = []
+
+        for category, values in picked.items():
+            if category == "avoid":
+                filtered[category] = list(values)
+                continue
+
+            kept: List[str] = []
+            for value in values:
+                if self.item_matches_negative_term(value, negative_terms):
+                    removed.append(f"{category}: {value}")
+                else:
+                    kept.append(value)
+            filtered[category] = kept
+
+        return filtered, removed
+
+
+    def clean_negative_note(self, value: str) -> str:
+        """Normalise avoid/exclusion wording for Suno's separate negative prompt box."""
+        item = re.sub(r"\s+", " ", str(value).strip().strip("'\""))
+        if not item:
+            return ""
+        item = re.sub(r"^(avoid|no|without)\s+", "", item, flags=re.IGNORECASE).strip()
+        item = item.strip(" .,:;")
+        return item
+
+    def build_negative_prompt_text(self, picked: Dict[str, List[str]], settings: GeneratorSettings, negative_terms: List[str]) -> str:
+        """Build a separate negative prompt from:
+        - user-entered negative prompt terms
+        - generated avoid notes
+        - selected association exclusions
+        """
+        terms: List[str] = []
+        seen = set()
+
+        def add_term(value: str) -> None:
+            cleaned = self.clean_negative_note(value)
+            if not cleaned:
+                return
+            key = cleaned.casefold()
+            if key not in seen:
+                seen.add(key)
+                terms.append(cleaned)
+
+        for term in negative_terms:
+            add_term(term)
+
+        for value in picked.get("avoid", []):
+            add_term(value)
+
+        # Add active association exclusions to the negative prompt as suggestions.
+        assoc_sources: List[dict] = []
+        assoc_data = self.get_association(settings.base_style)
+        if assoc_data:
+            assoc_sources.append(assoc_data)
+
+        # If blend support exists and is active, include exclusions from blended associations too.
+        try:
+            if hasattr(self, "blend_styles_list") and hasattr(self, "blend_enabled_check") and self.blend_enabled_check.isChecked():
+                for item in self.blend_styles_list.selectedItems():
+                    blend_assoc = self.get_association(item.text())
+                    if blend_assoc:
+                        assoc_sources.append(blend_assoc)
+        except Exception:
+            pass
+
+        for assoc in assoc_sources:
+            exclude = assoc.get("exclude", {}) if isinstance(assoc, dict) else {}
+            if isinstance(exclude, dict):
+                for value in exclude.get("genres", []):
+                    add_term(value)
+                for value in exclude.get("instruments", []):
+                    add_term(value)
+
+        return ", ".join(terms)
+
+
+
+    def on_negative_prompt_changed(self) -> None:
+        """Update only filtering/negative-output for the current generated prompt.
+
+        This keeps the last generated prompt stable while the user edits the negative prompt,
+        removing only items that now match the negative terms.
+        """
+        if getattr(self, "_suspend_negative_regen", False):
+            return
+
+        if self._last_generated_picked is None or self._last_generation_settings is None:
+            self.generate_prompt()
+            return
+
+        settings = self.collect_settings()
+        picked = {key: list(values) for key, values in self._last_generated_picked.items()}
+
+        negative_terms = self.parse_negative_terms(settings.negative_prompt)
+        picked, removed_by_negative = self.apply_negative_filters(picked, negative_terms)
+
+        prompt = self.build_main_prompt_from_picked(picked, settings)
+        negative_prompt_text = self.build_negative_prompt_text(picked, settings, negative_terms)
+
+        self.output.blockSignals(True)
+        self.output.setPlainText(prompt)
+        self.output.blockSignals(False)
+
+        if hasattr(self, "negative_output"):
+            self.negative_output.blockSignals(True)
+            self.negative_output.setPlainText(negative_prompt_text)
+            self.negative_output.blockSignals(False)
+
+        self._last_generation_removed_by_negative = removed_by_negative
+        self.update_breakdown(settings, picked, negative_prompt_text, removed_by_negative)
+        self.update_count()
+
+    def build_main_prompt_from_picked(self, picked: Dict[str, List[str]], settings: GeneratorSettings) -> str:
+        prompt_parts: List[str] = []
+
+        base_prompt = settings.base_prompt.strip()
+        if base_prompt:
+            prompt_parts.append(base_prompt)
+
+        if picked.get("genres"):
+            prompt_parts.append(", ".join(picked["genres"]))
+        if picked.get("instruments"):
+            prompt_parts.append("featuring " + ", ".join(picked["instruments"]))
+        if picked.get("playing"):
+            prompt_parts.append(", ".join(picked["playing"]))
+        if picked.get("moods"):
+            prompt_parts.append(", ".join(picked["moods"]))
+        if picked.get("eras"):
+            prompt_parts.append(", ".join(picked["eras"]))
+        if picked.get("vocals"):
+            prompt_parts.append(", ".join(picked["vocals"]))
+        if picked.get("production"):
+            prompt_parts.append(", ".join(picked["production"]))
+
+        # Never add avoid/negative instructions to the main Suno prompt.
+        return self.trim_prompt("; ".join(part for part in prompt_parts if part), settings.max_chars)
+
+    def active_style_label_from_settings(self, settings: GeneratorSettings) -> str:
+        try:
+            if hasattr(self, "blend_enabled_check") and self.blend_enabled_check.isChecked():
+                selected = [item.text() for item in self.blend_styles_list.selectedItems()]
+                if settings.base_style != "None" and settings.base_style not in selected:
+                    selected.insert(0, settings.base_style)
+                if selected:
+                    return " + ".join(selected)
+        except Exception:
+            pass
+        return settings.base_style
+
+    def update_breakdown(
+        self,
+        settings: GeneratorSettings,
+        picked: Dict[str, List[str]],
+        negative_prompt_text: str,
+        removed_by_negative: List[str],
+    ) -> None:
+        active_style_label = self.active_style_label_from_settings(settings)
+        self.breakdown.setPlainText(
+            "Breakdown\n\n"
+            f"Mode: {settings.mode}\n"
+            f"Base prompt: {settings.base_prompt or '(none)'}\n"
+            f"Negative prompt: {settings.negative_prompt or '(none)'}\n"
+            f"Base style: {active_style_label}\n"
+            f"Association engine: {'on' if settings.use_associations and active_style_label != 'None' and settings.mode != 'Chaos' else 'off'}\n"
+            f"Cohesion: {settings.cohesion}% | Mutation: {settings.weirdness}% | Allow excluded: {settings.allow_excluded}\n\n"
+            f"Genres: {', '.join(picked.get('genres', []))}\n"
+            f"Instruments: {', '.join(picked.get('instruments', []))}\n"
+            f"Playing: {', '.join(picked.get('playing', []))}\n"
+            f"Moods: {', '.join(picked.get('moods', []))}\n"
+            f"Eras: {', '.join(picked.get('eras', []))}\n"
+            f"Vocals: {', '.join(picked.get('vocals', []))}\n"
+            f"Production: {', '.join(picked.get('production', []))}\n"
+            f"Separate negative prompt: {negative_prompt_text if negative_prompt_text else 'none'}\n"
+            f"Filtered by negative prompt: {', '.join(removed_by_negative) if removed_by_negative else 'none'}"
+        )
+
+    def add_prompt_to_history(self, main_prompt: str, negative_prompt: str, settings: GeneratorSettings) -> None:
+        main_prompt = main_prompt.strip()
+        if not main_prompt:
+            return
+
+        # Avoid adding identical consecutive entries.
+        if self.prompt_history and self.prompt_history[0].get("main") == main_prompt and self.prompt_history[0].get("negative") == negative_prompt:
+            return
+
+        entry = {
+            "main": main_prompt,
+            "negative": negative_prompt.strip(),
+            "mode": settings.mode,
+            "base_style": self.active_style_label_from_settings(settings),
+        }
+        self.prompt_history.insert(0, entry)
+        self.prompt_history = self.prompt_history[:PROMPT_HISTORY_LIMIT]
+        self.refresh_history_list()
+
+    def refresh_history_list(self) -> None:
+        if not hasattr(self, "history_list"):
+            return
+        self.history_list.blockSignals(True)
+        self.history_list.clear()
+        for idx, entry in enumerate(self.prompt_history, start=1):
+            main = entry.get("main", "")
+            style = entry.get("base_style", "None")
+            snippet = main.replace("\n", " ")
+            if len(snippet) > 110:
+                snippet = snippet[:107].rstrip() + "..."
+            item = QListWidgetItem(f"{idx}. [{style}] {snippet}")
+            item.setData(Qt.UserRole, entry)
+            self.history_list.addItem(item)
+        self.history_list.blockSignals(False)
+
+    def restore_history_item(self, item: QListWidgetItem) -> None:
+        entry = item.data(Qt.UserRole)
+        if not isinstance(entry, dict):
+            return
+        self.output.blockSignals(True)
+        self.output.setPlainText(entry.get("main", ""))
+        self.output.blockSignals(False)
+
+        if hasattr(self, "negative_output"):
+            self.negative_output.blockSignals(True)
+            self.negative_output.setPlainText(entry.get("negative", ""))
+            self.negative_output.blockSignals(False)
+
+        self.update_count()
+        self.statusBar().showMessage("Restored prompt from history", 2500)
+
+    def restore_selected_history_item(self) -> None:
+        if not hasattr(self, "history_list"):
+            return
+        item = self.history_list.currentItem()
+        if item is not None:
+            self.restore_history_item(item)
+
+    def copy_selected_history_item(self) -> None:
+        if not hasattr(self, "history_list"):
+            return
+        item = self.history_list.currentItem()
+        if item is None:
+            return
+        entry = item.data(Qt.UserRole)
+        if isinstance(entry, dict):
+            QGuiApplication.clipboard().setText(entry.get("main", ""))
+            self.statusBar().showMessage("Copied selected history prompt", 2500)
+
+    def clear_prompt_history(self) -> None:
+        self.prompt_history.clear()
+        self.refresh_history_list()
+        self.statusBar().showMessage("Prompt history cleared", 2500)
+
+
     def generate_prompt(self) -> None:
         if not hasattr(self, "mode_combo"):
             return
@@ -2476,52 +2863,33 @@ class Mishmasher(QMainWindow):
             rng.shuffle(picked["instruments"])
             rng.shuffle(picked["playing"])
 
-        prompt_parts = []
-        base_prompt = re.sub(r"\s+", " ", settings.base_prompt).strip(" ;,")
-        if base_prompt:
-            prompt_parts.append(base_prompt)
-        if picked["genres"] and not (settings.simple_append_only and base_prompt):
-            prompt_parts.append(", ".join(picked["genres"]))
-        if picked["instruments"]:
-            prompt_parts.append("featuring " + ", ".join(picked["instruments"]))
-        if picked["playing"]:
-            prompt_parts.append(", ".join(picked["playing"]))
-        if picked["moods"]:
-            prompt_parts.append(", ".join(picked["moods"]))
-        if picked["eras"]:
-            prompt_parts.append(", ".join(picked["eras"]))
-        if picked["vocals"]:
-            prompt_parts.append(", ".join(picked["vocals"]))
-        if picked["production"]:
-            prompt_parts.append(", ".join(picked["production"]))
-        if picked["avoid"]:
-            prompt_parts.append(", ".join(picked["avoid"]))
+        # Keep an unfiltered copy of the generated extras so editing the negative
+        # prompt later only removes matching items from this generated result,
+        # instead of re-rolling the whole prompt.
+        self._last_generated_picked = {key: list(values) for key, values in picked.items()}
+        self._last_generation_settings = settings
 
-        prompt = "; ".join(prompt_parts)
-        prompt = self.trim_prompt(prompt, settings.max_chars)
+        negative_terms = self.parse_negative_terms(settings.negative_prompt)
+        removed_by_negative: List[str] = []
+        if negative_terms:
+            picked, removed_by_negative = self.apply_negative_filters(picked, negative_terms)
+
+        prompt = self.build_main_prompt_from_picked(picked, settings)
+        negative_prompt_text = self.build_negative_prompt_text(picked, settings, negative_terms)
 
         self.output.blockSignals(True)
         self.output.setPlainText(prompt)
         self.output.blockSignals(False)
 
-        self.breakdown.setPlainText(
-            "Breakdown\n\n"
-            f"Mode: {settings.mode}\n"
-            f"Association engine: {'on' if associations_active else 'off'}\n"
-            f"Base prompt: {settings.base_prompt or '(none)'}\n"
-            f"Base style: {active_style_label}\n"
-            f"Blend enabled: {'yes' if settings.blend_enabled and blend_names else 'no'}\n"
-            f"Cohesion: {settings.cohesion}% | Mutation: {settings.weirdness}% | Allow excluded: {settings.allow_excluded}\n\n"
-            f"Genres: {', '.join(picked['genres'])}\n"
-            f"Instruments: {', '.join(picked['instruments'])}\n"
-            f"Playing: {', '.join(picked['playing'])}\n"
-            f"Moods: {', '.join(picked['moods'])}\n"
-            f"Eras: {', '.join(picked['eras'])}\n"
-            f"Vocals: {', '.join(picked['vocals'])}\n"
-            f"Production: {', '.join(picked['production'])}\n"
-            f"Avoid: {', '.join(picked['avoid'])}"
-        )
+        if hasattr(self, "negative_output"):
+            self.negative_output.blockSignals(True)
+            self.negative_output.setPlainText(negative_prompt_text)
+            self.negative_output.blockSignals(False)
+
+        self._last_generation_removed_by_negative = removed_by_negative
+        self.update_breakdown(settings, picked, negative_prompt_text, removed_by_negative)
         self.update_count()
+        self.add_prompt_to_history(prompt, negative_prompt_text, settings)
 
     def trim_prompt(self, prompt: str, limit: int) -> str:
         if len(prompt) <= limit:
@@ -2551,7 +2919,13 @@ class Mishmasher(QMainWindow):
 
     def copy_prompt(self) -> None:
         QGuiApplication.clipboard().setText(self.output.toPlainText())
-        self.statusBar().showMessage("Copied to clipboard", 2500)
+        self.statusBar().showMessage("Copied main prompt to clipboard", 2500)
+
+    def copy_negative_prompt(self) -> None:
+        if not hasattr(self, "negative_output"):
+            return
+        QGuiApplication.clipboard().setText(self.negative_output.toPlainText())
+        self.statusBar().showMessage("Copied negative prompt to clipboard", 2500)
 
     def save_prompt_to_file(self) -> None:
         path, _ = QFileDialog.getSaveFileName(self, "Save prompt", "suno_style_prompt.txt", "Text Files (*.txt)")
