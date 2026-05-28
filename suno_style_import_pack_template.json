@@ -1,0 +1,62 @@
+{
+  "packs": [
+    {
+      "name": "Industrial Metal Core",
+      "genres": [
+        "industrial metal",
+        "groove metal",
+        "EBM"
+      ],
+      "instruments": [
+        "palm-muted rhythm guitars",
+        "808 kick",
+        "sub bass"
+      ],
+      "playing": [
+        "industrial stomp",
+        "mechanical quantization"
+      ],
+      "moods": [
+        "paranoid urban tension",
+        "cold neon atmosphere"
+      ],
+      "eras": [
+        "90s industrial metal production",
+        "modern cinematic hybrid mix"
+      ],
+      "vocals": [
+        "gritty male lead vocal",
+        "distorted vocal layers"
+      ],
+      "production": [
+        "tight low end",
+        "gritty analogue texture"
+      ],
+      "avoid": [
+        "avoid generic pop chorus"
+      ],
+      "exclude": {
+        "genres": [
+          "sea shanty",
+          "neo-soul"
+        ],
+        "instruments": [
+          "accordion",
+          "tin whistle"
+        ]
+      },
+      "mutation_candidates": {
+        "genres": [
+          "trip-hop",
+          "witch house"
+        ],
+        "instruments": [
+          "Mellotron choir"
+        ],
+        "moods": [
+          "towering cinematic tension"
+        ]
+      }
+    }
+  ]
+}
