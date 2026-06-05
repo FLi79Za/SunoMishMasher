@@ -1,0 +1,4119 @@
+[
+  {
+    "name": "Action Movie Darkwave",
+    "genres": [
+      "dark synthwave",
+      "electronic rock",
+      "action score",
+      "industrial electronica",
+      "cyberpunk soundtrack",
+      "darkwave",
+      "electro-industrial",
+      "cinematic synth",
+      "neo-noir score",
+      "bass-driven electronica",
+      "hybrid trailer music",
+      "midtempo electronic"
+    ],
+    "instruments": [
+      "analog synth",
+      "distorted bass synth",
+      "cinematic drums",
+      "taiko drums",
+      "electronic percussion",
+      "pulsing bass",
+      "arpeggiated synth",
+      "distorted guitar",
+      "sub bass",
+      "orchestral hits",
+      "string stabs",
+      "synth brass",
+      "granular textures",
+      "impact FX",
+      "reverse effects"
+    ],
+    "playing": [
+      "driving pulse",
+      "syncopated basslines",
+      "tight drum programming",
+      "aggressive build-ups",
+      "repetitive synth motifs",
+      "cinematic risers",
+      "mechanical groove",
+      "layered percussion",
+      "tense rhythmic loops",
+      "slow-burning intensity",
+      "staccato strings",
+      "minimal melodic phrasing",
+      "heavy downbeats",
+      "dynamic drops"
+    ],
+    "moods": [
+      "moody",
+      "dark",
+      "tense",
+      "relentless",
+      "cinematic",
+      "brooding",
+      "cold",
+      "nocturnal",
+      "menacing",
+      "adrenaline-fueled",
+      "urban",
+      "focused",
+      "dangerous",
+      "suspenseful"
+    ],
+    "eras": [
+      "80s synth aesthetic",
+      "modern action score",
+      "neo-noir soundtrack",
+      "digital dystopia",
+      "post-2010 electronic score",
+      "retro-futurist",
+      "underground club era",
+      "hybrid cinematic era"
+    ],
+    "vocals": [
+      "minimal vocals",
+      "processed vocals",
+      "male chants",
+      "distorted vocal textures",
+      "spoken phrases",
+      "whispered vocals",
+      "robotic vocals",
+      "layered vocal swells",
+      "trailer-style chants",
+      "vocal drones"
+    ],
+    "production": [
+      "cinematic mixing",
+      "heavy sidechain",
+      "distorted saturation",
+      "deep sub bass",
+      "wide stereo image",
+      "punchy drums",
+      "dark reverb",
+      "hybrid score production",
+      "compressed percussion",
+      "trailer-style impacts",
+      "cold digital texture",
+      "analog grit",
+      "layered low end",
+      "high dynamic tension"
+    ],
+    "excluded_genres": [
+      "happy hardcore",
+      "bubblegum pop",
+      "folk acoustic",
+      "country pop",
+      "ska",
+      "tropical house",
+      "k-pop dance",
+      "surf rock",
+      "comedy music",
+      "uplifting trance"
+    ],
+    "excluded_instruments": [
+      "ukulele",
+      "banjo",
+      "bright accordion",
+      "steel drums",
+      "piccolo",
+      "harpsichord",
+      "funk slap bass",
+      "jazzy sax solos",
+      "acoustic campfire guitar",
+      "cheerful whistles"
+    ],
+    "mutation_genres": [
+      "dark techno",
+      "EBM",
+      "drum and bass",
+      "industrial metal",
+      "ambient noir",
+      "dark ambient",
+      "post-rock",
+      "minimal techno",
+      "cyberpunk ambient",
+      "trap noir",
+      "orchestral hybrid",
+      "future garage"
+    ],
+    "mutation_instruments": [
+      "modular synth",
+      "prepared piano",
+      "cello drones",
+      "metallic percussion",
+      "hybrid strings",
+      "distorted piano",
+      "pulse sequencers",
+      "granular pads",
+      "live toms",
+      "electric violin",
+      "processed choir",
+      "analog tape FX"
+    ],
+    "mutation_moods": [
+      "apocalyptic",
+      "haunted",
+      "predatory",
+      "paranoid",
+      "rain-soaked",
+      "hypnotic",
+      "violent elegance",
+      "urban isolation",
+      "cold fury",
+      "shadowy",
+      "futuristic dread",
+      "midnight tension"
+    ]
+  },
+  {
+    "name": "Australian Tribal",
+    "genres": [
+      "Australian tribal",
+      "Indigenous fusion",
+      "Outback ambient",
+      "Tribal cinematic",
+      "Desert folk",
+      "Earth ritual",
+      "World percussion",
+      "Organic drone",
+      "Dreamtime ambient",
+      "Primitive groove"
+    ],
+    "instruments": [
+      "Didgeridoo",
+      "Clapsticks",
+      "Tribal drums",
+      "Frame drum",
+      "Boomerang percussion",
+      "Hand percussion",
+      "Shakers",
+      "Wooden flutes",
+      "Deep toms",
+      "Drone bass",
+      "Acoustic guitar",
+      "Earthy synth pads",
+      "Rainstick",
+      "Bullroarer",
+      "Ambient textures"
+    ],
+    "playing": [
+      "Circular breathing drones",
+      "Polyrhythmic percussion",
+      "Deep pulse grooves",
+      "Tribal chanting",
+      "Layered drum patterns",
+      "Slow ceremonial builds",
+      "Call-and-response rhythms",
+      "Breath-driven phrasing",
+      "Sparse atmospheric pacing",
+      "Organic rhythmic flow",
+      "Hypnotic repetition",
+      "Percussive accents"
+    ],
+    "moods": [
+      "Ancient",
+      "Spiritual",
+      "Earthy",
+      "Mystical",
+      "Primal",
+      "Atmospheric",
+      "Ritualistic",
+      "Expansive",
+      "Trance-like",
+      "Desert cinematic",
+      "Sacred",
+      "Raw"
+    ],
+    "eras": [
+      "Traditional tribal",
+      "1990s world fusion",
+      "2000s tribal ambient",
+      "Modern cinematic tribal",
+      "Contemporary indigenous fusion",
+      "Ancient ceremonial"
+    ],
+    "vocals": [
+      "Tribal chants",
+      "Deep male vocals",
+      "Group chanting",
+      "Breathy vocal textures",
+      "Ceremonial vocals",
+      "Call-and-response vocals",
+      "Whispered harmonies",
+      "Atmospheric vocal layers"
+    ],
+    "production": [
+      "Organic percussion mix",
+      "Wide ambient space",
+      "Natural room reverb",
+      "Earthy low end",
+      "Cinematic tribal layering",
+      "Raw acoustic textures",
+      "Deep drone resonance",
+      "Atmospheric field recordings",
+      "Minimal compression",
+      "Desert ambience",
+      "Hybrid organic production"
+    ],
+    "excluded_genres": [
+      "Bubblegum pop",
+      "Hyperpop",
+      "EDM festival",
+      "Smooth jazz",
+      "K-pop",
+      "Happy hardcore",
+      "Disco funk",
+      "Commercial dance pop"
+    ],
+    "excluded_instruments": [
+      "Trap hi-hats",
+      "Bright EDM synth leads",
+      "Auto-tuned vocal chops",
+      "Dubstep bass wobble",
+      "Brass section",
+      "Orchestral harp",
+      "Synth brass",
+      "808 cowbells"
+    ],
+    "mutation_genres": [
+      "Dark ambient",
+      "Psytrance",
+      "Industrial tribal",
+      "Cinematic techno",
+      "Drone metal",
+      "Ethno-electronic",
+      "Post-rock",
+      "Dub techno",
+      "Neo-shamanic",
+      "Tribal house",
+      "Experimental ambient",
+      "Desert blues"
+    ],
+    "mutation_instruments": [
+      "Analog synth drones",
+      "Distorted percussion",
+      "Sub bass pulses",
+      "Electric cello",
+      "Granular textures",
+      "Reversed didgeridoo",
+      "Hybrid drum machines",
+      "Modular synths",
+      "Metal percussion",
+      "Processed field recordings",
+      "Low brass drones",
+      "Ambient guitar swells"
+    ],
+    "mutation_moods": [
+      "Haunting",
+      "Hypnotic",
+      "Apocalyptic",
+      "Cosmic",
+      "Nocturnal",
+      "Monolithic",
+      "Shamanic",
+      "Tense",
+      "Meditative",
+      "Mythic",
+      "Shadowy",
+      "Transcendent"
+    ]
+  },
+  {
+    "name": "Backwater Country",
+    "genres": [
+      "backwater country",
+      "old-time folk",
+      "bluegrass",
+      "hillbilly string band",
+      "square dance",
+      "barn dance",
+      "country hoedown",
+      "rustic Americana",
+      "jug band folk"
+    ],
+    "instruments": [
+      "banjo",
+      "fiddle",
+      "acoustic guitar",
+      "upright bass",
+      "mandolin",
+      "harmonica",
+      "washboard",
+      "hand claps",
+      "foot stomps",
+      "jug",
+      "kazoo"
+    ],
+    "playing": [
+      "fast banjo picking",
+      "bouncy fiddle leads",
+      "swinging two-step rhythm",
+      "shuffle groove",
+      "call-and-response",
+      "stomping percussion",
+      "loose ensemble playing",
+      "toe-tapping groove",
+      "campfire strumming",
+      "square dance pacing"
+    ],
+    "moods": [
+      "festive",
+      "cheerful",
+      "playful",
+      "rustic",
+      "warm",
+      "rowdy",
+      "lighthearted",
+      "wholesome",
+      "carefree",
+      "front porch energy"
+    ],
+    "eras": [
+      "1930s rural folk",
+      "1940s barn dance",
+      "1950s country radio",
+      "Appalachian traditional",
+      "dusty analog era",
+      "old-time Americana"
+    ],
+    "vocals": [
+      "male vocals",
+      "mixed group vocals",
+      "gritty folk vocals",
+      "playful delivery",
+      "rowdy gang vocals",
+      "twangy harmonies",
+      "shouted refrains",
+      "spoken interjections"
+    ],
+    "production": [
+      "live room recording",
+      "raw acoustic mix",
+      "warm tape saturation",
+      "dry folk production",
+      "vintage mono feel",
+      "porch jam atmosphere",
+      "organic ensemble sound",
+      "minimal studio polish"
+    ],
+    "excluded_genres": [
+      "trap",
+      "EDM",
+      "industrial metal",
+      "symphonic orchestral",
+      "hyperpop",
+      "drill",
+      "smooth jazz",
+      "ambient drone"
+    ],
+    "excluded_instruments": [
+      "808 bass",
+      "synth arpeggiators",
+      "orchestral strings",
+      "dubstep bass",
+      "electric shred guitar",
+      "trance pads",
+      "brass section",
+      "auto-tuned vocals"
+    ],
+    "mutation_genres": [
+      "gypsy folk",
+      "swamp blues",
+      "cajun",
+      "western swing",
+      "folk punk",
+      "dark Americana",
+      "riverboat jazz",
+      "country gospel",
+      "southern gothic",
+      "ragtime folk"
+    ],
+    "mutation_instruments": [
+      "accordion",
+      "resonator guitar",
+      "slide guitar",
+      "tin whistle",
+      "pump organ",
+      "bones percussion",
+      "tambourine",
+      "violin drone",
+      "upright piano",
+      "brush drums"
+    ],
+    "mutation_moods": [
+      "dusty carnival",
+      "moonshine mischief",
+      "riverboat charm",
+      "wild frontier",
+      "drunken singalong",
+      "campfire nostalgia",
+      "rustic mystery",
+      "sunny backroads",
+      "chaotic hoedown",
+      "grimy folk energy"
+    ]
+  },
+  {
+    "name": "Bollywood Action Movie",
+    "genres": [
+      "Bollywood action soundtrack",
+      "Cinematic orchestral",
+      "Epic trailer music",
+      "Indian cinematic",
+      "Hybrid orchestral",
+      "Action score",
+      "Desi electronic",
+      "Percussion-driven soundtrack"
+    ],
+    "instruments": [
+      "Taiko drums",
+      "Dhol",
+      "Tabla",
+      "String orchestra",
+      "Brass ensemble",
+      "Cinematic percussion",
+      "Synth bass",
+      "Orchestral hits",
+      "Sitar",
+      "Electric guitar",
+      "Choir",
+      "Toms",
+      "Sub bass",
+      "Ethnic flutes",
+      "Staccato strings"
+    ],
+    "playing": [
+      "Driving percussion",
+      "Fast rhythmic pulses",
+      "Staccato strings",
+      "Heavy drum accents",
+      "Epic brass swells",
+      "Layered percussion",
+      "Syncopated grooves",
+      "Aggressive builds",
+      "Cinematic drops",
+      "Tension risers",
+      "Explosive transitions",
+      "Hybrid orchestral layering"
+    ],
+    "moods": [
+      "Heroic",
+      "Intense",
+      "Explosive",
+      "Triumphant",
+      "Suspenseful",
+      "Adrenaline-fueled",
+      "Dark cinematic",
+      "Massive",
+      "Determined",
+      "High-energy",
+      "Epic",
+      "Dangerous"
+    ],
+    "eras": [
+      "2000s Bollywood",
+      "2010s blockbuster",
+      "Modern cinematic",
+      "Contemporary action score",
+      "Hybrid orchestral era",
+      "Streaming-era soundtrack"
+    ],
+    "vocals": [
+      "Powerful male vocals",
+      "Female cinematic vocals",
+      "Epic choir",
+      "Layered chants",
+      "Aggressive group vocals",
+      "Breathy vocal hooks",
+      "Dramatic vocal phrases",
+      "Anthemic backing vocals"
+    ],
+    "production": [
+      "Wide cinematic mix",
+      "Punchy low end",
+      "Heavy compression",
+      "Large hall reverb",
+      "Trailer-style mastering",
+      "Hybrid orchestral production",
+      "Modern action soundtrack polish",
+      "Deep sub impact",
+      "High dynamic tension",
+      "Layered percussion mix",
+      "Aggressive transient shaping"
+    ],
+    "excluded_genres": [
+      "Lo-fi hip hop",
+      "Traditional jazz",
+      "Acoustic folk",
+      "Minimal techno",
+      "Soft ambient",
+      "Country pop",
+      "Bedroom pop",
+      "Chillwave"
+    ],
+    "excluded_instruments": [
+      "Ukulele",
+      "Banjo",
+      "Harmonica",
+      "Accordion",
+      "Jazz brush kit",
+      "Smooth saxophone",
+      "Bongo loops",
+      "Harpsichord"
+    ],
+    "mutation_genres": [
+      "Cyberpunk soundtrack",
+      "Dark synthwave",
+      "Industrial rock",
+      "Arabic orchestral",
+      "Phonk",
+      "Drum and bass",
+      "Trap orchestral",
+      "Psytrance",
+      "Electro-industrial",
+      "Cinematic metal",
+      "Dubstep hybrid",
+      "Military march"
+    ],
+    "mutation_instruments": [
+      "Distorted synths",
+      "808 drops",
+      "Industrial percussion",
+      "Electric cello",
+      "Granular textures",
+      "Glitch FX",
+      "Analog synth arps",
+      "Processed vocals",
+      "Heavy guitar riffs",
+      "War drums",
+      "Reverse cymbals",
+      "Neural bass textures"
+    ],
+    "mutation_moods": [
+      "Apocalyptic",
+      "Paranoid",
+      "Mystical",
+      "Futuristic",
+      "Ruthless",
+      "Chaotic",
+      "Militant",
+      "Noir",
+      "Hyper-aggressive",
+      "Shadowy",
+      "Relentless",
+      "Mythic"
+    ]
+  },
+  {
+    "name": "Breakbeat",
+    "genres": [
+      "breakbeat",
+      "jungle",
+      "drum and bass",
+      "nu skool breaks",
+      "rave breaks",
+      "big beat"
+    ],
+    "instruments": [
+      "breakbeat drums",
+      "sub bass",
+      "samplers",
+      "rave stabs",
+      "synth leads",
+      "percussion loops"
+    ],
+    "playing": [
+      "chopped rhythms",
+      "syncopated grooves",
+      "drum edits",
+      "rolling breaks",
+      "sample manipulation",
+      "high-energy transitions"
+    ],
+    "moods": [
+      "rebellious",
+      "energetic",
+      "urban",
+      "chaotic",
+      "playful",
+      "underground"
+    ],
+    "eras": [
+      "90s rave",
+      "jungle era",
+      "big beat era",
+      "modern bass music",
+      "warehouse culture",
+      "breaks revival"
+    ],
+    "vocals": [
+      "sampled vocals",
+      "ragga phrases",
+      "vocal snippets",
+      "processed vocals",
+      "spoken hooks",
+      "crowd chants"
+    ],
+    "production": [
+      "heavy drums",
+      "punchy transients",
+      "deep bass",
+      "sample layering",
+      "gritty texture",
+      "club energy"
+    ],
+    "excluded_genres": [
+      "opera",
+      "country",
+      "easy listening",
+      "smooth jazz"
+    ],
+    "excluded_instruments": [
+      "violin solos",
+      "banjo",
+      "accordion",
+      "harpsichord"
+    ],
+    "mutation_genres": [
+      "cyberbreaks",
+      "industrial breaks",
+      "electro breaks",
+      "cinematic dnb",
+      "breaksynth"
+    ],
+    "mutation_instruments": [
+      "cinematic hits",
+      "hybrid percussion",
+      "modular synths",
+      "granular effects"
+    ],
+    "mutation_moods": [
+      "adrenaline",
+      "neon-lit",
+      "restless",
+      "dystopian"
+    ]
+  },
+  {
+    "name": "Club / EDM 01",
+    "genres": [
+      "techno",
+      "dubstep",
+      "acid house",
+      "darksynth",
+      "trance",
+      "house",
+      "drum and bass",
+      "hardstyle",
+      "synthwave",
+      "breakbeat",
+      "electro house",
+      "psytrance",
+      "uk garage"
+    ],
+    "instruments": [
+      "synthesizer",
+      "sub-bass",
+      "808 drum machine",
+      "909 kick",
+      "roland tb-303",
+      "wavetable synth",
+      "sampler",
+      "supersaw",
+      "arpeggiator",
+      "heavy drum kit"
+    ],
+    "playing": [
+      "four-on-the-floor",
+      "heavy sidechain",
+      "fast tempo",
+      "driving beat",
+      "bass drop",
+      "sweeping filter",
+      "stuttering rhythm",
+      "pumping bass",
+      "squelchy bass",
+      "repetitive sequence",
+      "breakbeat chop"
+    ],
+    "moods": [
+      "energetic",
+      "hypnotic",
+      "dark",
+      "euphoric",
+      "aggressive",
+      "driving",
+      "futuristic",
+      "underground",
+      "trippy",
+      "relentless"
+    ],
+    "eras": [
+      "1990s rave",
+      "2000s club",
+      "2010s festival",
+      "1980s warehouse",
+      "modern edm",
+      "futuristic",
+      "retro-futuristic"
+    ],
+    "vocals": [
+      "heavily processed vocals",
+      "vocoder",
+      "chopped vocals",
+      "repetitive vocal hook",
+      "diva vocals",
+      "glitchy vocals",
+      "pitch-shifted vocals",
+      "robotic voice",
+      "spoken word samples"
+    ],
+    "production": [
+      "sidechain compression",
+      "heavy delay",
+      "digital distortion",
+      "low-pass filter sweeps",
+      "massive sub-frequencies",
+      "saturated mix",
+      "loud master",
+      "stereo widening",
+      "bitcrushed accents"
+    ],
+    "excluded_genres": [
+      "acoustic folk",
+      "classical orchestral",
+      "bluegrass",
+      "traditional country",
+      "smooth jazz",
+      "barbershop quartet"
+    ],
+    "excluded_instruments": [
+      "acoustic guitar",
+      "banjo",
+      "ukulele",
+      "harp",
+      "french horn",
+      "pedal steel"
+    ],
+    "mutation_genres": [
+      "industrial metal",
+      "cyberpunk",
+      "glitch-hop",
+      "dark ambient",
+      "cinematic trap",
+      "symphonic metal"
+    ],
+    "mutation_instruments": [
+      "distorted electric guitar",
+      "cinematic taiko drums",
+      "orchestral strings",
+      "slap bass",
+      "heavy brass section"
+    ],
+    "mutation_moods": [
+      "cinematic",
+      "eerie",
+      "melancholic",
+      "terrifying",
+      "epic"
+    ]
+  },
+  {
+    "name": "Club Dance and Remixes",
+    "genres": [
+      "EDM",
+      "house",
+      "techno",
+      "tech house",
+      "trance",
+      "dubstep",
+      "drum and bass",
+      "electro house",
+      "club remix",
+      "slap house"
+    ],
+    "instruments": [
+      "synthesizer",
+      "drum machine",
+      "808 sub bass",
+      "909 kick drum",
+      "sampler",
+      "wavetable synth",
+      "supersaw",
+      "arpeggiator"
+    ],
+    "playing": [
+      "four on the floor",
+      "heavy sidechain compression",
+      "bass drop",
+      "build up",
+      "sweeping filter",
+      "repetitive sequence",
+      "pumping groove",
+      "syncopated rhythm"
+    ],
+    "moods": [
+      "energetic",
+      "euphoric",
+      "driving",
+      "hypnotic",
+      "aggressive",
+      "upbeat",
+      "relentless",
+      "festival ready"
+    ],
+    "eras": [
+      "2010s festival edm",
+      "1990s rave",
+      "2020s club",
+      "modern electronic",
+      "2000s electro"
+    ],
+    "vocals": [
+      "heavily processed vocals",
+      "chopped and screwed",
+      "vocoder",
+      "diva vocal sample",
+      "pitch shifted vocals",
+      "rhythmic vocal chops",
+      "repetitive vocal hook"
+    ],
+    "production": [
+      "heavy sidechain",
+      "massive low end",
+      "wide stereo image",
+      "saturated mix",
+      "loud master",
+      "club mix",
+      "dj edit",
+      "sweeping risers"
+    ],
+    "excluded_genres": [
+      "acoustic folk",
+      "classical orchestral",
+      "country",
+      "bluegrass",
+      "smooth jazz",
+      "barbershop quartet"
+    ],
+    "excluded_instruments": [
+      "acoustic guitar",
+      "banjo",
+      "french horn",
+      "harp",
+      "ukulele",
+      "pedal steel"
+    ],
+    "mutation_genres": [
+      "cinematic trailer hybrid",
+      "darksynth metal",
+      "cyberpunk industrial",
+      "glitch hop",
+      "symphonic bass"
+    ],
+    "mutation_instruments": [
+      "cinematic taiko drums",
+      "distorted electric guitar",
+      "orchestral strings",
+      "heavy brass section",
+      "granular synthesized choir"
+    ],
+    "mutation_moods": [
+      "cinematic",
+      "eerie",
+      "melancholic",
+      "epic",
+      "dystopian",
+      "terrifying"
+    ]
+  },
+  {
+    "name": "Cosmic Soviet Shoegaze Noir",
+    "genres": [
+      "space ambient",
+      "post-shoegaze",
+      "Soviet underground punk",
+      "indie noir",
+      "alternative dream rock",
+      "coldwave",
+      "post-punk"
+    ],
+    "instruments": [
+      "pedalboard electric guitar",
+      "mono P bass",
+      "subtle analog synth",
+      "acoustic jazz chords",
+      "funk drum kit",
+      "chorused clean guitar",
+      "reverb swells"
+    ],
+    "playing": [
+      "sullen swing groove",
+      "airy funky drumming",
+      "slow drifting rhythms",
+      "interwoven bar chords",
+      "extended harmony voicings",
+      "plektrum bass grind",
+      "melancholic delay phrasing",
+      "loose indie pulse"
+    ],
+    "moods": [
+      "somber",
+      "cosmic",
+      "melancholic",
+      "noir",
+      "lonely",
+      "dreamlike",
+      "futuristic",
+      "cold romantic"
+    ],
+    "eras": [
+      "late 80s underground",
+      "Soviet post-punk era",
+      "90s shoegaze haze",
+      "cassette underground",
+      "retro futurist",
+      "analog indie noir"
+    ],
+    "vocals": [
+      "detached male vocals",
+      "soft baritone delivery",
+      "distant layered vocals",
+      "whispered harmonies",
+      "melancholic indie vocals"
+    ],
+    "production": [
+      "tape saturated",
+      "wide reverb",
+      "mono low end",
+      "dreamy modulation",
+      "dusty analog texture",
+      "dark spacious mix",
+      "soft chorus haze",
+      "cinematic atmosphere"
+    ],
+    "excluded_genres": [
+      "EDM",
+      "trap",
+      "country pop",
+      "happy hardcore",
+      "reggaeton"
+    ],
+    "excluded_instruments": [
+      "brass section",
+      "ukulele",
+      "dubstep bass",
+      "banjo",
+      "orchestral timpani"
+    ],
+    "mutation_genres": [
+      "dark jazz",
+      "doomgaze",
+      "ambient funk",
+      "trip hop noir",
+      "Kosmische musik"
+    ],
+    "mutation_instruments": [
+      "baritone sax",
+      "modular synth pulses",
+      "bowed bass",
+      "vibraphone",
+      "granular textures"
+    ],
+    "mutation_moods": [
+      "abandoned space station",
+      "urban twilight",
+      "frozen nostalgia",
+      "decayed romance",
+      "hypnotic isolation"
+    ]
+  },
+  {
+    "name": "Dark Ambient / Dungeon Synth",
+    "genres": [
+      "Dark Ambient",
+      "Dungeon synth",
+      "Keller synth",
+      "hauntology",
+      "Illbient",
+      "Lowercase"
+    ],
+    "instruments": [
+      "field recordings",
+      "Mellotron choir",
+      "analog synth pads",
+      "choir swells",
+      "Waterphone",
+      "Glass Armonica",
+      "Ondes Martenot"
+    ],
+    "playing": [
+      "slow cinematic build",
+      "tension-and-release arrangement",
+      "Mechanical quantization",
+      "Cinematic tom patterns"
+    ],
+    "moods": [
+      "haunted and cinematic",
+      "mysterious and ritualistic",
+      "dreamy but unsettling",
+      "cold neon atmosphere"
+    ],
+    "eras": [
+      "lo-fi cassette texture",
+      "retro video game soundtrack energy",
+      "modern cinematic production"
+    ],
+    "vocals": [
+      "whispered intro",
+      "no vocals, instrumental",
+      "operatic backing vocals"
+    ],
+    "production": [
+      "dark ambient intro",
+      "big reverb tails",
+      "cinematic transitions",
+      "gritty analogue texture"
+    ],
+    "excluded_genres": [
+      "Celtic punk",
+      "thrash metal",
+      "sea shanty",
+      "samba rock"
+    ],
+    "excluded_instruments": [
+      "wah guitar solo",
+      "blast-beat drums",
+      "tight snare",
+      "accordion"
+    ],
+    "mutation_genres": [
+      "blackened folk metal",
+      "witch house",
+      "Blackgaze"
+    ],
+    "mutation_instruments": [
+      "twin distorted guitars",
+      "taiko drums"
+    ],
+    "mutation_moods": []
+  },
+  {
+    "name": "Dark Noir Country",
+    "genres": [
+      "dark country",
+      "outlaw country",
+      "gothic americana",
+      "southern noir",
+      "blues noir",
+      "western noir"
+    ],
+    "instruments": [
+      "baritone guitar",
+      "acoustic guitar",
+      "upright bass",
+      "brush drums",
+      "tremolo electric guitar",
+      "harmonica",
+      "slide guitar",
+      "church organ"
+    ],
+    "playing": [
+      "slow rolling rhythm",
+      "minimal drum groove",
+      "dusty guitar picking",
+      "deep bass pulse",
+      "wide cinematic spacing",
+      "restrained arrangements",
+      "train-like percussion",
+      "echo-heavy transitions"
+    ],
+    "moods": [
+      "moody",
+      "dark",
+      "brooding",
+      "lonely",
+      "smoky",
+      "ominous",
+      "desolate",
+      "cinematic"
+    ],
+    "eras": [
+      "1950s noir",
+      "1960s outlaw country",
+      "1970s americana",
+      "vintage western",
+      "modern dark folk"
+    ],
+    "vocals": [
+      "deep male vocals",
+      "gritty baritone",
+      "spoken-sung delivery",
+      "restrained vocal tone",
+      "weathered vocals",
+      "dry intimate vocals"
+    ],
+    "production": [
+      "dark analog warmth",
+      "roomy reverb",
+      "tape saturation",
+      "dry vocal presence",
+      "cinematic ambience",
+      "minimal low-end bloom",
+      "dusty mix texture",
+      "wide stereo guitars"
+    ],
+    "excluded_genres": [
+      "EDM",
+      "happy pop",
+      "hyperpop",
+      "dancehall",
+      "bright synthpop",
+      "festival trap"
+    ],
+    "excluded_instruments": [
+      "supersaw synths",
+      "orchestral brass",
+      "ukulele",
+      "trance pads",
+      "dubstep bass",
+      "808 slides"
+    ],
+    "mutation_genres": [
+      "dark blues",
+      "doom folk",
+      "swamp rock",
+      "ambient western",
+      "post-rock americana",
+      "southern gothic"
+    ],
+    "mutation_instruments": [
+      "modular synth textures",
+      "cello drones",
+      "taiko drums",
+      "industrial percussion",
+      "bowed bass",
+      "granular ambience"
+    ],
+    "mutation_moods": [
+      "haunted",
+      "ritualistic",
+      "funeral march",
+      "apocalyptic",
+      "midnight desert",
+      "cold cinematic tension"
+    ]
+  },
+  {
+    "name": "Dark Rave Music",
+    "genres": [
+      "dark rave",
+      "industrial techno",
+      "acid techno",
+      "breakbeat rave",
+      "hard dance",
+      "electro industrial"
+    ],
+    "instruments": [
+      "acid synth bass",
+      "rave stabs",
+      "909 drums",
+      "breakbeat loops",
+      "distorted synth leads",
+      "sub bass pulses"
+    ],
+    "playing": [
+      "driving four on the floor",
+      "relentless club pulse",
+      "sharp synth stabs",
+      "hypnotic bass cycling",
+      "hard snare accents",
+      "warehouse build ups"
+    ],
+    "moods": [
+      "dark euphoric",
+      "neon tense",
+      "dangerous",
+      "hypnotic",
+      "underground",
+      "adrenaline fueled"
+    ],
+    "eras": [
+      "late 90s warehouse rave",
+      "cyberpunk nightclub",
+      "industrial club era",
+      "underground techno scene",
+      "pre millennium rave"
+    ],
+    "vocals": [
+      "minimal vocal chops",
+      "commanding spoken vocals",
+      "distorted chant vocals",
+      "cold robotic vocals",
+      "sparse hype vocals"
+    ],
+    "production": [
+      "huge club low end",
+      "dark warehouse reverb",
+      "compressed drums",
+      "metallic synth texture",
+      "wide stereo delays",
+      "gritty electronic saturation"
+    ],
+    "excluded_genres": [
+      "acoustic folk",
+      "country rock",
+      "soft pop",
+      "smooth jazz",
+      "reggae"
+    ],
+    "excluded_instruments": [
+      "acoustic guitar strums",
+      "banjo",
+      "ukulele",
+      "upright bass",
+      "brush drums"
+    ],
+    "mutation_genres": [
+      "goth rave",
+      "cyberpunk trance",
+      "industrial breakcore",
+      "dark synthwave",
+      "techno metal"
+    ],
+    "mutation_instruments": [
+      "distorted electric guitar",
+      "choir pads",
+      "taiko hits",
+      "modular synth arps",
+      "cinematic impacts"
+    ],
+    "mutation_moods": [
+      "more dystopian",
+      "more violent",
+      "more cinematic",
+      "colder",
+      "more ritualistic"
+    ]
+  },
+  {
+    "name": "Deep Space Indie Noir Drift",
+    "genres": [
+      "deep space ambient",
+      "indie alternative",
+      "post-shoegaze",
+      "noir rock",
+      "dream punk",
+      "ambient post-punk",
+      "slowcore"
+    ],
+    "instruments": [
+      "delay soaked guitar",
+      "acoustic suspended chords",
+      "P bass pick attack",
+      "soft synth pads",
+      "live funk drums",
+      "chorus guitar",
+      "tremolo textures"
+    ],
+    "playing": [
+      "behind-the-beat groove",
+      "somber swing feel",
+      "layered guitar harmonics",
+      "floating rhythmic drift",
+      "restrained drum pocket",
+      "extended chord tension",
+      "minimal melodic phrasing"
+    ],
+    "moods": [
+      "bleak",
+      "futuristic",
+      "weightless",
+      "moody",
+      "introspective",
+      "dusky",
+      "romantic isolation",
+      "cold atmospheric"
+    ],
+    "eras": [
+      "80s Soviet underground",
+      "90s alternative haze",
+      "retro sci-fi",
+      "cassette noir",
+      "post-industrial dream era"
+    ],
+    "vocals": [
+      "low intimate vocals",
+      "breathy male lead",
+      "washed vocal doubles",
+      "soft spoken phrasing",
+      "restrained indie delivery"
+    ],
+    "production": [
+      "dark analog ambience",
+      "slow stereo bloom",
+      "grainy tape texture",
+      "soft compression",
+      "modulated reverb tails",
+      "lo-fi spaciousness",
+      "cinematic low light mix"
+    ],
+    "excluded_genres": [
+      "brostep",
+      "latin pop",
+      "arena rock",
+      "hyperpop",
+      "commercial house"
+    ],
+    "excluded_instruments": [
+      "bright trumpets",
+      "acoustic banjo",
+      "festival synth leads",
+      "slap bass",
+      "orchestral choirs"
+    ],
+    "mutation_genres": [
+      "ambient dub",
+      "industrial dream pop",
+      "space jazz noir",
+      "minimal wave",
+      "ethereal funk"
+    ],
+    "mutation_instruments": [
+      "spring reverb guitar",
+      "FM synth",
+      "electric piano",
+      "sub drones",
+      "processed field recordings"
+    ],
+    "mutation_moods": [
+      "orbital loneliness",
+      "rainy neon dusk",
+      "abandoned metropolis",
+      "slow motion melancholy",
+      "cosmic exhaustion"
+    ]
+  },
+  {
+    "name": "Desert Ritual Rock",
+    "genres": [
+      "desert blues",
+      "stoner rock",
+      "psychedelic funk",
+      "doom metal",
+      "sludge blues"
+    ],
+    "instruments": [
+      "fuzz bass",
+      "tribal toms",
+      "oud",
+      "sitar",
+      "distorted organ",
+      "live hand percussion",
+      "nylon guitar"
+    ],
+    "playing": [
+      "slow cinematic build",
+      "wide vibrato",
+      "dissonant chord voicings",
+      "Tribal hand percussion",
+      "syncopated groove"
+    ],
+    "moods": [
+      "sun-baked desert mood",
+      "mysterious and ritualistic",
+      "brooding and elegant",
+      "haunted and cinematic"
+    ],
+    "eras": [
+      "70s analogue warmth",
+      "lo-fi cassette texture",
+      "modern cinematic production"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "chanting crowd vocals",
+      "low spoken-word verses"
+    ],
+    "production": [
+      "distorted tape saturation",
+      "gritty analogue texture",
+      "tight low end",
+      "dynamic arrangement with strong contrast"
+    ],
+    "excluded_genres": [
+      "chiptune",
+      "Seapunk",
+      "amapiano",
+      "Extratone"
+    ],
+    "excluded_instruments": [
+      "accordion",
+      "FM synth bells",
+      "808 kick",
+      "tin whistle"
+    ],
+    "mutation_genres": [
+      "Dungeon synth",
+      "dark cabaret",
+      "spaghetti western"
+    ],
+    "mutation_instruments": [
+      "choir swells",
+      "orchestral strings",
+      "Waterphone"
+    ],
+    "mutation_moods": []
+  },
+  {
+    "name": "Eastern European Folk Dance",
+    "genres": [
+      "Eastern European folk",
+      "Cossack folk",
+      "Hungarian folk dance",
+      "Carpathian folk",
+      "Balkan folk",
+      "Tavern folk"
+    ],
+    "instruments": [
+      "accordion",
+      "fiddle",
+      "balalaika",
+      "cimbalom",
+      "upright bass",
+      "tapan drum",
+      "hand percussion",
+      "claps and stomps"
+    ],
+    "playing": [
+      "fast dance tempo",
+      "squat-kick rhythms",
+      "driving stomp patterns",
+      "call and response chants",
+      "rapid fiddle runs",
+      "accordion-led melodies",
+      "communal dance energy",
+      "dynamic tempo surges"
+    ],
+    "moods": [
+      "festive",
+      "rowdy",
+      "joyful",
+      "spirited",
+      "celebratory",
+      "rustic",
+      "communal",
+      "triumphant"
+    ],
+    "eras": [
+      "traditional folk",
+      "19th century",
+      "early 20th century",
+      "village festival",
+      "heritage acoustic",
+      "timeless folk"
+    ],
+    "vocals": [
+      "male group vocals",
+      "folk chants",
+      "shouted refrains",
+      "unison singing",
+      "robust delivery",
+      "communal choruses"
+    ],
+    "production": [
+      "live acoustic ensemble",
+      "tavern ambience",
+      "natural room sound",
+      "organic dynamics",
+      "earthy textures",
+      "crowd energy",
+      "warm acoustic mix",
+      "dance-focused arrangement"
+    ],
+    "excluded_genres": [
+      "trap",
+      "modern EDM",
+      "smooth jazz",
+      "ambient drone",
+      "metalcore",
+      "reggaeton"
+    ],
+    "excluded_instruments": [
+      "808 bass",
+      "synth arpeggiators",
+      "electric guitar solos",
+      "orchestral strings",
+      "autotuned vocals",
+      "dubstep bass"
+    ],
+    "mutation_genres": [
+      "folk punk",
+      "dark folk",
+      "cinematic folk",
+      "gypsy swing",
+      "neofolk",
+      "folk trailer music"
+    ],
+    "mutation_instruments": [
+      "brass section",
+      "hurdy-gurdy",
+      "taiko drums",
+      "orchestral percussion",
+      "mandolin",
+      "choir"
+    ],
+    "mutation_moods": [
+      "epic",
+      "mischievous",
+      "heroic",
+      "cinematic",
+      "adventurous",
+      "wild"
+    ]
+  },
+  {
+    "name": "Electro",
+    "genres": [
+      "electro",
+      "dark electro",
+      "electroclash",
+      "electro funk",
+      "cyber electro",
+      "electro-industrial"
+    ],
+    "instruments": [
+      "drum machines",
+      "analog synths",
+      "electronic bass",
+      "sequencers",
+      "vocoder",
+      "arpeggiators"
+    ],
+    "playing": [
+      "syncopated beats",
+      "robotic grooves",
+      "funk-infused rhythms",
+      "machine precision",
+      "staccato patterns",
+      "electronic pulse"
+    ],
+    "moods": [
+      "futuristic",
+      "cool",
+      "robotic",
+      "dark",
+      "stylish",
+      "neon-lit"
+    ],
+    "eras": [
+      "80s electro",
+      "retro future",
+      "modern cyberpunk",
+      "electro revival",
+      "digital age",
+      "underground club"
+    ],
+    "vocals": [
+      "vocoder vocals",
+      "robotic vocals",
+      "spoken vocals",
+      "processed vocals",
+      "detached delivery",
+      "synthetic harmonies"
+    ],
+    "production": [
+      "crisp drum programming",
+      "analog character",
+      "dry mix",
+      "electronic texture",
+      "tight bass",
+      "retro-futuristic polish"
+    ],
+    "excluded_genres": [
+      "folk",
+      "country",
+      "acoustic rock",
+      "bluegrass"
+    ],
+    "excluded_instruments": [
+      "banjo",
+      "acoustic guitar",
+      "fiddle",
+      "harmonica"
+    ],
+    "mutation_genres": [
+      "darksynth",
+      "ebm",
+      "synthwave",
+      "cyberpunk",
+      "industrial electro"
+    ],
+    "mutation_instruments": [
+      "cinematic synths",
+      "hybrid drums",
+      "modular textures",
+      "orchestral accents"
+    ],
+    "mutation_moods": [
+      "cold",
+      "technological",
+      "apocalyptic",
+      "sleek"
+    ]
+  },
+  {
+    "name": "Glitchy Dubstep",
+    "genres": [
+      "dubstep",
+      "glitch hop",
+      "brostep",
+      "riddim",
+      "neurofunk",
+      "IDM",
+      "electronic dance music"
+    ],
+    "instruments": [
+      "wobble bass",
+      "sub bass",
+      "synthesizer",
+      "drum machine",
+      "sampler",
+      "wavetable synth",
+      "FM synthesizer"
+    ],
+    "playing": [
+      "half time rhythm",
+      "heavy drop",
+      "syncopated beat",
+      "stuttering rhythm",
+      "bass wobble",
+      "complex drum patterns"
+    ],
+    "moods": [
+      "aggressive",
+      "chaotic",
+      "dark",
+      "futuristic",
+      "energetic",
+      "cyberpunk"
+    ],
+    "eras": [
+      "2010s dubstep",
+      "modern electronic",
+      "future bass era",
+      "2020s underground bass"
+    ],
+    "vocals": [
+      "vocal chops",
+      "pitch shifted vocals",
+      "robotic voice",
+      "glitchy vocals",
+      "processed speech"
+    ],
+    "production": [
+      "heavy sidechain compression",
+      "bitcrushed accents",
+      "distorted bass",
+      "stutter effects",
+      "massive low end",
+      "granular synthesis",
+      "metallic sound design"
+    ],
+    "excluded_genres": [
+      "acoustic folk",
+      "classical orchestral",
+      "country",
+      "bluegrass",
+      "smooth jazz"
+    ],
+    "excluded_instruments": [
+      "acoustic guitar",
+      "banjo",
+      "pedal steel",
+      "harp",
+      "ukulele",
+      "flute"
+    ],
+    "mutation_genres": [
+      "industrial metal",
+      "cinematic trap",
+      "darksynth",
+      "cyberpunk hardcore",
+      "symphonic deathcore"
+    ],
+    "mutation_instruments": [
+      "cinematic taiko drums",
+      "distorted 8-string guitar",
+      "orchestral brass stabs",
+      "church organ",
+      "choir"
+    ],
+    "mutation_moods": [
+      "apocalyptic",
+      "terrifying",
+      "epic",
+      "dystopian",
+      "cinematic"
+    ]
+  },
+  {
+    "name": "Grunge Rock",
+    "genres": [
+      "grunge rock",
+      "alternative rock",
+      "noise rock",
+      "sludge rock",
+      "post punk",
+      "garage rock"
+    ],
+    "instruments": [
+      "distorted guitars",
+      "fuzzy bass",
+      "live drums",
+      "feedback swells",
+      "dirty rhythm guitars",
+      "crash cymbals"
+    ],
+    "playing": [
+      "loose heavy grooves",
+      "quiet loud dynamics",
+      "sludgy guitar riffs",
+      "raw power chords",
+      "explosive chorus hits",
+      "dragging mid tempo feel"
+    ],
+    "moods": [
+      "angsty",
+      "bleak",
+      "rebellious",
+      "raw",
+      "melancholic",
+      "tense"
+    ],
+    "eras": [
+      "early 90s alternative",
+      "underground rock club",
+      "cassette demo grit",
+      "garage rehearsal room",
+      "pre digital rock"
+    ],
+    "vocals": [
+      "raspy male vocals",
+      "strained clean vocals",
+      "shouted choruses",
+      "mumbled verses",
+      "gritty emotional delivery"
+    ],
+    "production": [
+      "raw guitar tone",
+      "dry live drums",
+      "muddy low end",
+      "minimal polish",
+      "roomy garage ambience",
+      "analog tape grit"
+    ],
+    "excluded_genres": [
+      "EDM pop",
+      "smooth jazz",
+      "country pop",
+      "disco funk",
+      "tropical house"
+    ],
+    "excluded_instruments": [
+      "bright synth leads",
+      "steel drums",
+      "banjo",
+      "saxophone solos",
+      "orchestral harp"
+    ],
+    "mutation_genres": [
+      "industrial grunge",
+      "doom grunge",
+      "shoegaze grunge",
+      "post hardcore",
+      "dark alt rock"
+    ],
+    "mutation_instruments": [
+      "detuned baritone guitar",
+      "distorted cello",
+      "broken organ",
+      "tape noise loops",
+      "metallic percussion"
+    ],
+    "mutation_moods": [
+      "dirtier",
+      "more paranoid",
+      "more cinematic",
+      "heavier",
+      "more haunted"
+    ]
+  },
+  {
+    "name": "Grunge Rock Expansion",
+    "genres": [
+      "90s alternative rock",
+      "post-grunge",
+      "shoegaze",
+      "sludge blues",
+      "stoner rock"
+    ],
+    "instruments": [
+      "twin distorted guitars",
+      "fuzz bass",
+      "tight snare",
+      "distorted organ",
+      "vinyl crackle"
+    ],
+    "playing": [
+      "quiet-loud dynamics",
+      "Loose live drumming",
+      "Behind-the-beat groove",
+      "wide vibrato",
+      "big singalong chorus"
+    ],
+    "moods": [
+      "brooding and elegant",
+      "bittersweet nostalgia",
+      "dreamy but unsettling",
+      "lonely midnight drive"
+    ],
+    "eras": [
+      "mid-90s alternative rock polish",
+      "early 90s metal mix",
+      "lo-fi cassette texture"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "raw punk vocal delivery",
+      "raspy gang vocals"
+    ],
+    "production": [
+      "wide stereo guitars",
+      "gritty analogue texture",
+      "punchy drums",
+      "dry upfront vocals",
+      "dynamic arrangement with strong contrast"
+    ],
+    "excluded_genres": [
+      "sea shanty",
+      "Russian folk",
+      "Balkan brass",
+      "amapiano",
+      "chiptune",
+      "Extratone",
+      "Harsh Noise Wall"
+    ],
+    "excluded_instruments": [
+      "accordion",
+      "theremin",
+      "balalaika",
+      "tin whistle",
+      "bagpipes",
+      "erhu",
+      "shakuhachi",
+      "kora",
+      "sitar",
+      "oud",
+      "taiko drums",
+      "marimba"
+    ],
+    "mutation_genres": [
+      "trip-hop",
+      "industrial metal",
+      "darkwave",
+      "Blackgaze"
+    ],
+    "mutation_instruments": [
+      "analog synth pads",
+      "field recordings",
+      "Mellotron choir"
+    ],
+    "mutation_moods": [
+      "paranoid urban tension",
+      "haunted and cinematic"
+    ]
+  },
+  {
+    "name": "Hardcore",
+    "genres": [
+      "hardcore",
+      "happy hardcore",
+      "gabber",
+      "frenchcore",
+      "hardstyle",
+      "rave hardcore"
+    ],
+    "instruments": [
+      "distorted kicks",
+      "synth leads",
+      "sub bass",
+      "rave stabs",
+      "electronic drums",
+      "acid lines"
+    ],
+    "playing": [
+      "relentless tempo",
+      "aggressive drops",
+      "rapid rhythms",
+      "high-energy builds",
+      "driving momentum",
+      "crowd-hype arrangements"
+    ],
+    "moods": [
+      "intense",
+      "aggressive",
+      "euphoric",
+      "chaotic",
+      "adrenaline-fueled",
+      "unstoppable"
+    ],
+    "eras": [
+      "90s gabber",
+      "millennium hardcore",
+      "classic rave",
+      "modern hard dance",
+      "festival era",
+      "underground scene"
+    ],
+    "vocals": [
+      "shouted vocals",
+      "crowd chants",
+      "processed vocals",
+      "pitched vocals",
+      "aggressive delivery",
+      "rave samples"
+    ],
+    "production": [
+      "brickwall energy",
+      "distorted textures",
+      "massive low end",
+      "loud mastering",
+      "festival-ready mix",
+      "compressed impact"
+    ],
+    "excluded_genres": [
+      "ambient folk",
+      "smooth jazz",
+      "country",
+      "soft rock"
+    ],
+    "excluded_instruments": [
+      "acoustic guitar",
+      "banjo",
+      "cello",
+      "flute"
+    ],
+    "mutation_genres": [
+      "industrial hardcore",
+      "hard techno",
+      "cybercore",
+      "dark rave",
+      "cinematic hardcore"
+    ],
+    "mutation_instruments": [
+      "orchestral hits",
+      "hybrid percussion",
+      "choirs",
+      "cinematic impacts"
+    ],
+    "mutation_moods": [
+      "apocalyptic",
+      "militant",
+      "catastrophic",
+      "triumphant"
+    ]
+  },
+  {
+    "name": "House",
+    "genres": [
+      "house",
+      "deep house",
+      "progressive house",
+      "tech house",
+      "bass house",
+      "classic house"
+    ],
+    "instruments": [
+      "piano chords",
+      "synth bass",
+      "drum machines",
+      "vocal chops",
+      "organ stabs",
+      "house percussion"
+    ],
+    "playing": [
+      "groove-driven rhythm",
+      "four-on-the-floor",
+      "rolling basslines",
+      "uplifting builds",
+      "syncopated percussion",
+      "dancefloor focus"
+    ],
+    "moods": [
+      "warm",
+      "uplifting",
+      "euphoric",
+      "smooth",
+      "energetic",
+      "sunset"
+    ],
+    "eras": [
+      "90s club",
+      "classic house",
+      "2000s progressive",
+      "modern dance",
+      "festival era",
+      "underground club"
+    ],
+    "vocals": [
+      "soulful vocals",
+      "female vocals",
+      "vocal chops",
+      "layered harmonies",
+      "uplifting hooks",
+      "house diva vocals"
+    ],
+    "production": [
+      "polished mix",
+      "warm saturation",
+      "wide stereo image",
+      "clean low end",
+      "club-ready sound",
+      "smooth compression"
+    ],
+    "excluded_genres": [
+      "black metal",
+      "bluegrass",
+      "hard rock",
+      "orchestral score"
+    ],
+    "excluded_instruments": [
+      "distorted guitars",
+      "banjo",
+      "bagpipes",
+      "concert harp"
+    ],
+    "mutation_genres": [
+      "future rave",
+      "disco house",
+      "melodic house",
+      "organic house",
+      "afro house"
+    ],
+    "mutation_instruments": [
+      "orchestral strings",
+      "ethnic percussion",
+      "cinematic pads",
+      "live bass"
+    ],
+    "mutation_moods": [
+      "dreamy",
+      "luxurious",
+      "nostalgic",
+      "expansive"
+    ]
+  },
+  {
+    "name": "Industrial Metal",
+    "genres": [
+      "metal",
+      "industrial metal",
+      "experimental metal",
+      "groove metal",
+      "thrash metal",
+      "EBM",
+      "aggrotech",
+      "post-industrial"
+    ],
+    "instruments": [
+      "distorted guitars",
+      "electronic",
+      "808 kick",
+      "analog synth pads",
+      "FM synth bells",
+      "sub bass",
+      "distorted organ",
+      "tight snare",
+      "cinematic braams"
+    ],
+    "playing": [
+      "mechanical quantization",
+      "industrial stomp",
+      "syncopated groove",
+      "stop-start riffing",
+      "double-kick drive",
+      "tension-and-release arrangement"
+    ],
+    "moods": [
+      "paranoid urban tension",
+      "cold neon atmosphere",
+      "darkly triumphant",
+      "brooding and elegant",
+      "haunted and cinematic",
+      "apocalyptic grandeur",
+      "dreamy but unsettling"
+    ],
+    "eras": [
+      "90s industrial metal production",
+      "late 90s cyberpunk soundtrack energy",
+      "modern cinematic hybrid mix",
+      "2000s compressed rock radio",
+      "modern trailer score production"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "eerie female nu-metal vocals",
+      "low spoken-word verses",
+      "raw punk vocal delivery",
+      "distorted vocal layers"
+    ],
+    "production": [
+      "punchy drums",
+      "wide stereo guitars",
+      "tight low end",
+      "gritty analogue texture",
+      "bass-forward mix",
+      "dark cinematic ambience",
+      "crisp transient attack",
+      "hybrid orchestral layering",
+      "distorted tape saturation",
+      "cinematic transitions"
+    ],
+    "excluded_genres": [
+      "sea shanty",
+      "Celtic punk",
+      "amapiano",
+      "highlife",
+      "neo-soul",
+      "whimsical orchestral"
+    ],
+    "excluded_instruments": [
+      "accordion",
+      "balalaika",
+      "tin whistle",
+      "banjo",
+      "hurdy-gurdy",
+      "marimba"
+    ],
+    "mutation_genres": [
+      "trip-hop",
+      "breakcore",
+      "witch house",
+      "doom metal",
+      "synthwave",
+      "dark ambient"
+    ],
+    "mutation_instruments": [
+      "Mellotron choir",
+      "theremin",
+      "taiko drums",
+      "Waterphone",
+      "orchestral strings"
+    ],
+    "mutation_moods": [
+      "lonely midnight drive",
+      "mysterious and ritualistic",
+      "towering cinematic tension"
+    ]
+  },
+  {
+    "name": "Intimate Acoustic Rock",
+    "genres": [
+      "acoustic rock",
+      "folk rock",
+      "indie acoustic",
+      "soft alternative",
+      "singer-songwriter"
+    ],
+    "instruments": [
+      "acoustic guitar",
+      "soft piano",
+      "brush drums",
+      "warm bass",
+      "subtle strings",
+      "ambient room tones"
+    ],
+    "playing": [
+      "stripped back arrangement",
+      "slow steady rhythm",
+      "fingerpicked guitar",
+      "gentle chord swells",
+      "minimal percussion",
+      "live room feel"
+    ],
+    "moods": [
+      "intimate",
+      "quiet",
+      "warm",
+      "melancholic",
+      "reflective",
+      "late night"
+    ],
+    "eras": [
+      "90s unplugged",
+      "2000s indie acoustic",
+      "modern folk rock",
+      "analog live session"
+    ],
+    "vocals": [
+      "soft male vocals",
+      "breathy delivery",
+      "close mic vocals",
+      "restrained performance",
+      "fragile harmonies"
+    ],
+    "production": [
+      "dry acoustic mix",
+      "warm analog tone",
+      "minimal layering",
+      "natural room reverb",
+      "organic recording",
+      "low dynamics"
+    ],
+    "excluded_genres": [
+      "EDM",
+      "trap",
+      "dubstep",
+      "industrial metal",
+      "hyperpop"
+    ],
+    "excluded_instruments": [
+      "synth leads",
+      "808 bass",
+      "aggressive electric guitars",
+      "orchestral brass",
+      "dance drums"
+    ],
+    "mutation_genres": [
+      "ambient folk",
+      "cinematic acoustic",
+      "slowcore",
+      "post-rock acoustic",
+      "indie chamber pop"
+    ],
+    "mutation_instruments": [
+      "felt piano",
+      "cello",
+      "tape textures",
+      "harmonium",
+      "soft synth pads"
+    ],
+    "mutation_moods": [
+      "dreamlike",
+      "cinematic solitude",
+      "frozen atmosphere",
+      "nostalgic",
+      "rainy evening"
+    ]
+  },
+  {
+    "name": "Japanese Action Film",
+    "genres": [
+      "kung fu soundtrack",
+      "Japanese cinematic",
+      "martial arts orchestral",
+      "taiko percussion",
+      "Japanese fusion",
+      "action score",
+      "samurai soundtrack",
+      "oriental electronic",
+      "dark orchestral",
+      "anime action music"
+    ],
+    "instruments": [
+      "taiko drums",
+      "shakuhachi",
+      "koto",
+      "shamisen",
+      "orchestral strings",
+      "cinematic brass",
+      "timpani",
+      "ethnic percussion",
+      "gong hits",
+      "synth bass",
+      "erhu",
+      "bamboo flute",
+      "taiko ensemble",
+      "distorted guitar",
+      "hybrid drums"
+    ],
+    "playing": [
+      "driving percussion",
+      "fast rhythmic pulses",
+      "staccato strings",
+      "dramatic drum fills",
+      "syncopated taiko",
+      "martial groove",
+      "cinematic risers",
+      "sharp orchestral hits",
+      "tense rhythmic layering",
+      "dynamic build-ups",
+      "combat pacing",
+      "percussive accents"
+    ],
+    "moods": [
+      "intense",
+      "heroic",
+      "disciplined",
+      "mysterious",
+      "cinematic",
+      "dark",
+      "epic",
+      "focused",
+      "tense",
+      "ancient",
+      "stealthy",
+      "adrenaline-fueled"
+    ],
+    "eras": [
+      "70s kung fu cinema",
+      "80s martial arts soundtrack",
+      "90s anime score",
+      "modern hybrid cinematic",
+      "traditional Japanese",
+      "retro action soundtrack",
+      "neo-oriental cinematic"
+    ],
+    "vocals": [
+      "male chants",
+      "group chants",
+      "wordless vocals",
+      "Japanese female vocals",
+      "deep ceremonial vocals",
+      "breathy vocal textures",
+      "dramatic ensemble vocals"
+    ],
+    "production": [
+      "cinematic mix",
+      "hybrid orchestral production",
+      "large hall reverb",
+      "punchy percussion",
+      "wide stereo imaging",
+      "dark atmospheric layering",
+      "trailer-style impact",
+      "analog soundtrack texture",
+      "modern action scoring",
+      "polished cinematic sound"
+    ],
+    "excluded_genres": [
+      "bubblegum pop",
+      "country pop",
+      "EDM festival",
+      "happy ukulele",
+      "smooth jazz",
+      "reggaeton",
+      "tropical house",
+      "folk pop",
+      "gospel",
+      "acoustic singer-songwriter"
+    ],
+    "excluded_instruments": [
+      "banjo",
+      "ukulele",
+      "saxophone",
+      "accordion",
+      "trap hi-hats",
+      "slap bass",
+      "steel guitar",
+      "harmonica",
+      "bright piano",
+      "whistle leads"
+    ],
+    "mutation_genres": [
+      "cyberpunk",
+      "industrial",
+      "dark synthwave",
+      "tribal ambient",
+      "electro-orchestral",
+      "drum and bass",
+      "phonk",
+      "dark trap",
+      "cinematic techno",
+      "gothic orchestral",
+      "Japanese jazz fusion",
+      "post-rock"
+    ],
+    "mutation_instruments": [
+      "modular synths",
+      "808 sub bass",
+      "granular textures",
+      "electric cello",
+      "industrial percussion",
+      "glitch effects",
+      "choir pads",
+      "analog synth arps",
+      "bass flute",
+      "processed taiko",
+      "cinematic drones",
+      "metal percussion"
+    ],
+    "mutation_moods": [
+      "chaotic",
+      "ritualistic",
+      "futuristic",
+      "haunted",
+      "apocalyptic",
+      "spiritual",
+      "aggressive",
+      "dreamlike",
+      "paranoid",
+      "mythic",
+      "suspenseful",
+      "melancholic"
+    ]
+  },
+  {
+    "name": "Jazz / Neo-Soul / Acid Groove",
+    "genres": [
+      "acid jazz",
+      "neo-soul",
+      "psychedelic funk",
+      "highlife",
+      "Afrobeat"
+    ],
+    "instruments": [
+      "fretless bass",
+      "upright bass",
+      "brass stabs",
+      "vibraphone",
+      "marimba",
+      "live hand percussion"
+    ],
+    "playing": [
+      "walking bassline",
+      "funky ghost notes",
+      "Ghost note funk",
+      "Broken beat",
+      "syncopated groove",
+      "Jazz brushwork"
+    ],
+    "moods": [
+      "brooding and elegant",
+      "playful but melancholic",
+      "bittersweet nostalgia"
+    ],
+    "eras": [
+      "70s analogue warmth",
+      "underground club mix",
+      "modern cinematic production"
+    ],
+    "vocals": [
+      "clean female lead vocal",
+      "layered harmonies",
+      "low spoken-word verses"
+    ],
+    "production": [
+      "bass-forward mix",
+      "clear melodic hook",
+      "dry upfront vocals",
+      "tight low end"
+    ],
+    "excluded_genres": [
+      "Gorenoise",
+      "Harsh Noise Wall",
+      "Extratone",
+      "thrash metal"
+    ],
+    "excluded_instruments": [
+      "blast-beat drums",
+      "palm-muted rhythm guitars",
+      "bagpipes",
+      "hurdy-gurdy"
+    ],
+    "mutation_genres": [
+      "trip-hop",
+      "darkwave",
+      "spaghetti western"
+    ],
+    "mutation_instruments": [
+      "analog synth pads",
+      "vinyl crackle"
+    ],
+    "mutation_moods": []
+  },
+  {
+    "name": "Lo-Fi Ambient",
+    "genres": [
+      "lo-fi hip hop",
+      "ambient lo-fi",
+      "chillhop",
+      "downtempo",
+      "jazzy beat tape",
+      "meditation music",
+      "sleep beats",
+      "study beats",
+      "ambient electronica",
+      "minimal chillout"
+    ],
+    "instruments": [
+      "rhodes piano",
+      "warm electric piano",
+      "dusty drums",
+      "vinyl crackle",
+      "soft synth pads",
+      "tape synth",
+      "sub bass",
+      "nylon guitar",
+      "jazz guitar",
+      "field recordings",
+      "lo-fi keys",
+      "muted bass",
+      "soft percussion",
+      "analog synth"
+    ],
+    "playing": [
+      "lazy drum groove",
+      "swing beats",
+      "soft fingerpicked guitar",
+      "minimal arrangements",
+      "loop-based structure",
+      "gentle sidechain",
+      "slow attack pads",
+      "humanized timing",
+      "subtle percussion",
+      "repetitive motifs",
+      "washed-out textures",
+      "understated melodies"
+    ],
+    "moods": [
+      "peaceful",
+      "meditative",
+      "dreamy",
+      "nostalgic",
+      "warm",
+      "sleepy",
+      "reflective",
+      "calm",
+      "intimate",
+      "floating",
+      "rainy night",
+      "gentle",
+      "soft-focus",
+      "cozy"
+    ],
+    "eras": [
+      "90s cassette aesthetic",
+      "late night radio",
+      "modern chillhop",
+      "analog tape era",
+      "bedroom producer era",
+      "retro sampling culture",
+      "early internet ambient",
+      "vintage jazz sampling"
+    ],
+    "vocals": [
+      "soft female vocals",
+      "breathy vocals",
+      "spoken word fragments",
+      "vocal chops",
+      "distant backing vocals",
+      "whispered vocals",
+      "hummed melodies",
+      "filtered vocals",
+      "minimal vocals",
+      "airy harmonies"
+    ],
+    "production": [
+      "tape saturation",
+      "vinyl texture",
+      "soft compression",
+      "warm reverb",
+      "dusty mix",
+      "low-pass filtering",
+      "analog warmth",
+      "cassette flutter",
+      "wide ambient space",
+      "bedroom production",
+      "degraded samples",
+      "soft clipping",
+      "minimal mastering"
+    ],
+    "excluded_genres": [
+      "brostep",
+      "hard techno",
+      "death metal",
+      "festival EDM",
+      "trap metal",
+      "big room house",
+      "aggressive drill",
+      "pop punk",
+      "speedcore",
+      "stadium rock"
+    ],
+    "excluded_instruments": [
+      "bagpipes",
+      "brass stabs",
+      "distorted lead guitar",
+      "orchestral timpani",
+      "harsh supersaws",
+      "screaming synth leads",
+      "slap bass",
+      "accordion",
+      "dubstep growls",
+      "marching snares"
+    ],
+    "mutation_genres": [
+      "trip hop",
+      "ambient dub",
+      "neo-soul",
+      "future garage",
+      "jazzhop",
+      "minimal techno",
+      "dark ambient",
+      "IDM",
+      "cinematic ambient",
+      "liquid drum and bass",
+      "organic house",
+      "post-rock"
+    ],
+    "mutation_instruments": [
+      "modular synth",
+      "kalimba",
+      "cello drones",
+      "hang drum",
+      "granular textures",
+      "reverse piano",
+      "mallets",
+      "shimmer guitar",
+      "tape loops",
+      "ambient choir",
+      "upright bass",
+      "waterphone"
+    ],
+    "mutation_moods": [
+      "hypnotic",
+      "melancholic",
+      "ethereal",
+      "foggy",
+      "weightless",
+      "underwater",
+      "nocturnal",
+      "cinematic solitude",
+      "haunted calm",
+      "slow-burning",
+      "cosmic",
+      "rain-soaked"
+    ]
+  },
+  {
+    "name": "Monkey Island Tavern Folk",
+    "genres": [
+      "sea shanty",
+      "Russian folk",
+      "Balkan brass",
+      "Celtic punk"
+    ],
+    "instruments": [
+      "accordion",
+      "balalaika",
+      "fiddle",
+      "nylon guitar",
+      "live hand percussion"
+    ],
+    "playing": [
+      "swing feel",
+      "call-and-response vocals",
+      "chant-like backing vocals"
+    ],
+    "moods": [
+      "playful but melancholic",
+      "reckless tavern energy",
+      "sarcastic and rowdy"
+    ],
+    "eras": [
+      "live tavern recording feel"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "chanting crowd vocals"
+    ],
+    "production": [
+      "clear melodic hook",
+      "dynamic arrangement with strong contrast"
+    ],
+    "excluded_genres": [],
+    "excluded_instruments": [],
+    "mutation_genres": [],
+    "mutation_instruments": [],
+    "mutation_moods": []
+  },
+  {
+    "name": "Neon Noir Synth",
+    "genres": [
+      "darkwave",
+      "synthwave",
+      "cyberpunk electro",
+      "EBM"
+    ],
+    "instruments": [
+      "analog synth pads",
+      "FM synth bells",
+      "arpeggiated modular synth",
+      "sub bass"
+    ],
+    "playing": [
+      "motorik pulse",
+      "slow cinematic build",
+      "staccato riffs"
+    ],
+    "moods": [
+      "cold neon atmosphere",
+      "paranoid urban tension",
+      "lonely midnight drive"
+    ],
+    "eras": [
+      "80s drum machine texture",
+      "modern cinematic production"
+    ],
+    "vocals": [
+      "low spoken-word verses",
+      "clean female lead vocal"
+    ],
+    "production": [
+      "big reverb tails",
+      "bass-forward mix",
+      "dark ambient intro"
+    ],
+    "excluded_genres": [],
+    "excluded_instruments": [],
+    "mutation_genres": [],
+    "mutation_instruments": [],
+    "mutation_moods": []
+  },
+  {
+    "name": "Neon Noir Synthwave",
+    "genres": [
+      "synthwave",
+      "retrowave",
+      "darkwave",
+      "cyberpunk electro",
+      "EBM",
+      "Vaportrap",
+      "witch house"
+    ],
+    "instruments": [
+      "analog synth pads",
+      "FM synth bells",
+      "arpeggiated modular synth",
+      "sub bass",
+      "808 kick",
+      "vinyl crackle"
+    ],
+    "playing": [
+      "motorik pulse",
+      "Mechanical quantization",
+      "Four-on-the-floor",
+      "Stuttering percussion",
+      "slow cinematic build"
+    ],
+    "moods": [
+      "cold neon atmosphere",
+      "paranoid urban tension",
+      "lonely midnight drive",
+      "dreamy but unsettling"
+    ],
+    "eras": [
+      "80s drum machine texture",
+      "late 80s production",
+      "modern cinematic production"
+    ],
+    "vocals": [
+      "low spoken-word verses",
+      "clean female lead vocal",
+      "whispered intro"
+    ],
+    "production": [
+      "big reverb tails",
+      "bass-forward mix",
+      "dark ambient intro",
+      "cinematic transitions"
+    ],
+    "excluded_genres": [
+      "sea shanty",
+      "Celtic punk",
+      "Russian folk",
+      "maskandi"
+    ],
+    "excluded_instruments": [
+      "accordion",
+      "banjo",
+      "balalaika",
+      "fiddle",
+      "tin whistle",
+      "bagpipes"
+    ],
+    "mutation_genres": [
+      "industrial metal",
+      "trip-hop",
+      "shoegaze"
+    ],
+    "mutation_instruments": [
+      "twin distorted guitars",
+      "Mellotron choir",
+      "field recordings"
+    ],
+    "mutation_moods": []
+  },
+  {
+    "name": "Noir Jazz",
+    "genres": [
+      "noir jazz",
+      "dark lounge jazz",
+      "smoky blues jazz",
+      "late-night jazz",
+      "film noir soundtrack",
+      "cool jazz",
+      "crime jazz",
+      "cinematic jazz",
+      "urban noir"
+    ],
+    "instruments": [
+      "upright bass",
+      "brush drums",
+      "muted trumpet",
+      "tenor saxophone",
+      "jazz piano",
+      "vibraphone",
+      "electric guitar",
+      "hammond organ",
+      "double bass",
+      "clarinet"
+    ],
+    "playing": [
+      "slow swing groove",
+      "brush kit rhythms",
+      "moody piano voicings",
+      "walking basslines",
+      "muted horn phrasing",
+      "lazy syncopation",
+      "smoky improvisation",
+      "nocturnal pacing",
+      "tight lounge ensemble",
+      "dramatic pauses"
+    ],
+    "moods": [
+      "mysterious",
+      "smoky",
+      "seductive",
+      "melancholic",
+      "tense",
+      "lonely",
+      "cool",
+      "shadowy",
+      "suspenseful",
+      "rain-soaked atmosphere"
+    ],
+    "eras": [
+      "1940s noir cinema",
+      "1950s cool jazz",
+      "1960s detective soundtrack",
+      "vintage lounge era",
+      "mid-century jazz club",
+      "analog film soundtrack"
+    ],
+    "vocals": [
+      "female jazz vocals",
+      "male crooner vocals",
+      "breathy vocals",
+      "low intimate delivery",
+      "smoky lounge vocals",
+      "whispered phrasing",
+      "sultry harmonies",
+      "spoken word passages"
+    ],
+    "production": [
+      "warm analog recording",
+      "vinyl crackle",
+      "roomy reverb",
+      "dim club ambience",
+      "vintage ribbon mic tone",
+      "dry upright bass",
+      "soft tape saturation",
+      "cinematic mix",
+      "low-lit lounge atmosphere"
+    ],
+    "excluded_genres": [
+      "EDM",
+      "happy hardcore",
+      "bubblegum pop",
+      "metalcore",
+      "festival trance",
+      "country pop",
+      "hyperpop",
+      "uplifting gospel"
+    ],
+    "excluded_instruments": [
+      "supersaw synths",
+      "808 bass",
+      "dubstep wobble bass",
+      "banjo",
+      "ukulele",
+      "festival claps",
+      "orchestral brass stabs",
+      "trap hi-hats"
+    ],
+    "mutation_genres": [
+      "trip hop",
+      "dark cabaret",
+      "acid jazz",
+      "neo-noir synthwave",
+      "bossa noir",
+      "dark ambient jazz",
+      "spy soundtrack",
+      "blues noir",
+      "downtempo lounge",
+      "electro swing"
+    ],
+    "mutation_instruments": [
+      "rhodes piano",
+      "analog synth pads",
+      "cello",
+      "bass clarinet",
+      "modular textures",
+      "congas",
+      "tremolo guitar",
+      "string quartet",
+      "electric piano",
+      "cinematic percussion"
+    ],
+    "mutation_moods": [
+      "cigarette smoke haze",
+      "midnight city",
+      "rainy alley tension",
+      "velvet decadence",
+      "paranoid suspense",
+      "lonely neon glow",
+      "after-hours melancholy",
+      "underworld glamour",
+      "dreamlike danger",
+      "cold urban romance"
+    ]
+  },
+  {
+    "name": "Noise / Extreme Weirdness",
+    "genres": [
+      "Harsh Noise Wall",
+      "Japanoise",
+      "Vapornoise",
+      "Gorenoise",
+      "Danger music",
+      "Extratone",
+      "Breakcore",
+      "Mathgrind"
+    ],
+    "instruments": [
+      "field recordings",
+      "Prepared piano",
+      "Daxophone",
+      "Waterphone",
+      "Apprehension Engine",
+      "theremin",
+      "Hydraulophone"
+    ],
+    "playing": [
+      "Blast beat",
+      "Stuttering percussion",
+      "Footwork tempo",
+      "Mechanical quantization",
+      "Polyrhythmic drumming"
+    ],
+    "moods": [
+      "chaotic festival atmosphere",
+      "dreamy but unsettling",
+      "paranoid urban tension",
+      "mysterious and ritualistic"
+    ],
+    "eras": [
+      "underground club mix",
+      "lo-fi cassette texture",
+      "modern cinematic production"
+    ],
+    "vocals": [
+      "raw punk vocal delivery",
+      "whispered intro",
+      "no vocals, instrumental"
+    ],
+    "production": [
+      "distorted tape saturation",
+      "gritty analogue texture",
+      "crisp transient attack",
+      "dynamic arrangement with strong contrast"
+    ],
+    "excluded_genres": [],
+    "excluded_instruments": [],
+    "mutation_genres": [
+      "Clowncore",
+      "Black MIDI",
+      "Nintendocore",
+      "Dungeon synth"
+    ],
+    "mutation_instruments": [
+      "accordion",
+      "FM synth bells",
+      "twin distorted guitars"
+    ],
+    "mutation_moods": []
+  },
+  {
+    "name": "Over The Top Theatrical Rock",
+    "genres": [
+      "theatrical rock",
+      "arena rock",
+      "power ballad rock",
+      "rock opera",
+      "glam rock",
+      "symphonic rock"
+    ],
+    "instruments": [
+      "grand piano",
+      "electric guitars",
+      "orchestral strings",
+      "massive drums",
+      "choir layers",
+      "power ballad bass",
+      "church organ"
+    ],
+    "playing": [
+      "huge dramatic builds",
+      "explosive chorus lifts",
+      "slow burning verses",
+      "arena sized transitions",
+      "grand piano openings",
+      "maximal final choruses"
+    ],
+    "moods": [
+      "melodramatic",
+      "heroic",
+      "romantic",
+      "grandiose",
+      "cinematic",
+      "triumphant"
+    ],
+    "eras": [
+      "80s arena rock",
+      "classic rock opera",
+      "stadium ballad era",
+      "glam rock theatre",
+      "orchestral rock revival"
+    ],
+    "vocals": [
+      "powerful male vocals",
+      "belted lead vocals",
+      "dramatic vibrato",
+      "layered backing vocals",
+      "choir supported choruses"
+    ],
+    "production": [
+      "massive reverb",
+      "wide stadium mix",
+      "glossy rock polish",
+      "orchestral layering",
+      "huge drum ambience",
+      "cinematic dynamic range"
+    ],
+    "excluded_genres": [
+      "minimal techno",
+      "lo fi hip hop",
+      "acoustic folk",
+      "smooth jazz",
+      "bedroom pop"
+    ],
+    "excluded_instruments": [
+      "ukulele",
+      "cheap drum machine",
+      "banjo",
+      "steel drums",
+      "toy piano"
+    ],
+    "mutation_genres": [
+      "gothic rock opera",
+      "symphonic metal",
+      "cinematic glam rock",
+      "prog rock ballad",
+      "dark cabaret rock"
+    ],
+    "mutation_instruments": [
+      "pipe organ",
+      "taiko drums",
+      "operatic choir",
+      "distorted cello",
+      "brass fanfare"
+    ],
+    "mutation_moods": [
+      "more epic",
+      "more tragic",
+      "more bombastic",
+      "more gothic",
+      "more heroic"
+    ]
+  },
+  {
+    "name": "Punk Rock",
+    "genres": [
+      "punk rock",
+      "pop punk",
+      "skate punk",
+      "garage punk",
+      "melodic punk",
+      "alternative punk"
+    ],
+    "instruments": [
+      "crunchy electric guitars",
+      "pick driven bass",
+      "fast live drums",
+      "power chords",
+      "gang vocal layers",
+      "bright crash cymbals"
+    ],
+    "playing": [
+      "fast downstrokes",
+      "tight power chord riffs",
+      "punchy chorus hooks",
+      "driving eighth note bass",
+      "snappy drum fills",
+      "short explosive sections"
+    ],
+    "moods": [
+      "rebellious",
+      "sarcastic",
+      "energetic",
+      "restless",
+      "youthful",
+      "defiant"
+    ],
+    "eras": [
+      "90s punk revival",
+      "skate park rock",
+      "mall punk era",
+      "garage band polish",
+      "early 2000s pop punk"
+    ],
+    "vocals": [
+      "nasal punk vocals",
+      "shouted lead vocals",
+      "clean energetic vocals",
+      "gang backing vocals",
+      "raspy chorus delivery"
+    ],
+    "production": [
+      "bright guitar crunch",
+      "tight drum mix",
+      "radio ready punch",
+      "dry vocal upfront",
+      "compressed rhythm guitars",
+      "clean loud master"
+    ],
+    "excluded_genres": [
+      "ambient drone",
+      "smooth jazz",
+      "classical crossover",
+      "deep house",
+      "country ballad"
+    ],
+    "excluded_instruments": [
+      "orchestral strings",
+      "saxophone solos",
+      "harp",
+      "steel guitar",
+      "flute"
+    ],
+    "mutation_genres": [
+      "hardcore punk",
+      "emo punk",
+      "ska punk",
+      "synth punk",
+      "garage pop"
+    ],
+    "mutation_instruments": [
+      "cheap synth lead",
+      "horn stabs",
+      "distorted organ",
+      "handclaps",
+      "lo fi drum machine"
+    ],
+    "mutation_moods": [
+      "more reckless",
+      "more anthemic",
+      "more chaotic",
+      "more playful",
+      "more bitter"
+    ]
+  },
+  {
+    "name": "Ritualistic",
+    "genres": [
+      "ritual darkwave",
+      "voodoo ambient",
+      "tribal occult electronic",
+      "dark electronic",
+      "occult pop",
+      "darkwave",
+      "witch house",
+      "industrial pop",
+      "seductive synthwave",
+      "minimal dark techno",
+      "ritual ambient",
+      "ceremonial dark pop",
+      "dark ethnic fusion",
+      "ritual industrial",
+      "shamanic downtempo",
+      "dark ritual ambient",
+      "occult electronic",
+      "tribal darkwave",
+      "ceremonial industrial",
+      "ritual techno",
+      "seductive neoclassical"
+    ],
+    "instruments": [
+      "bongo drums",
+      "congas",
+      "tribal drums",
+      "frame drums",
+      "taiko drums",
+      "ritual percussion",
+      "shakers",
+      "wood percussion",
+      "bass flute",
+      "pan flute",
+      "droning strings",
+      "cello",
+      "low brass",
+      "female choir",
+      "male chant",
+      "tribal vocal chants",
+      "dulcimer",
+      "didgeridoo",
+      "analog synths",
+      "dark pads",
+      "sub bass",
+      "gong swells",
+      "deep toms",
+      "ethnic flutes",
+      "reverse cymbals",
+      "shamanic percussion",
+      "bowed metals",
+      "pulse synth",
+      "electronic drums",
+      "distorted percussion",
+      "whisper textures",
+      "reverse fx",
+      "choir layers",
+      "bass synth arps",
+      "droning synths"
+    ],
+    "playing": [
+      "polyrhythmic percussion",
+      "ritual grooves",
+      "hypnotic drumming",
+      "call-and-response chants",
+      "ceremonial pacing",
+      "layered tribal percussion",
+      "slow-burning tension",
+      "syncopated hand drums",
+      "minimal harmonic movement",
+      "trance-like repetition",
+      "organic rhythmic flow",
+      "restrained orchestration",
+      "ritual rhythms",
+      "hypnotic percussion",
+      "slow tribal groove",
+      "layered percussion",
+      "droning tension",
+      "syncopated drum patterns",
+      "slow-burning builds",
+      "tribal pulse",
+      "slow groove",
+      "hypnotic repetition",
+      "syncopated pulses",
+      "restrained percussion",
+      "ritual percussion",
+      "minimal arrangement",
+      "layered tension",
+      "subtle risers",
+      "mechanical groove",
+      "breathing space",
+      "low-end focus",
+      "steady build"
+    ],
+    "moods": [
+      "ominous",
+      "ritualistic",
+      "seductive",
+      "tribal",
+      "forbidden",
+      "ancestral",
+      "mystical",
+      "hypnotic",
+      "shadowy",
+      "ceremonial",
+      "primal",
+      "dark spirituality",
+      "dark elegance",
+      "tense",
+      "cold",
+      "mysterious",
+      "smoldering",
+      "nocturnal"
+    ],
+    "eras": [
+      "modern",
+      "tribal electronic",
+      "neo-ritual",
+      "ancient ceremonial",
+      "post-industrial",
+      "2020s dark fusion",
+      "underground ritual",
+      "ethnic noir"
+    ],
+    "vocals": [
+      "ritual chanting",
+      "breathy female vocals",
+      "low male chants",
+      "group chants",
+      "whispered vocals",
+      "haunted choir",
+      "ethnic vocal textures",
+      "ceremonial harmonies",
+      "restrained vocals",
+      "shamanic calls"
+    ],
+    "production": [
+      "organic percussion texture",
+      "dark ambience",
+      "tribal room reverb",
+      "deep low-end",
+      "wide atmospheric mix",
+      "dusty percussion tone",
+      "hybrid acoustic-electronic mix",
+      "immersive spatial fx",
+      "subtle saturation",
+      "shadowy vocal layering",
+      "minimal compression",
+      "cold electronic polish"
+    ],
+    "excluded_genres": [
+      "epic trailer music",
+      "festival EDM",
+      "happy hardcore",
+      "bright synthpop",
+      "anthemic rock",
+      "pop punk",
+      "country pop",
+      "ska",
+      "uplifting trance",
+      "comedy rap"
+    ],
+    "excluded_instruments": [
+      "cinematic braams",
+      "heroic brass stabs",
+      "EDM supersaws",
+      "bright piano",
+      "ukulele",
+      "banjo",
+      "orchestral snare rolls",
+      "steel drums",
+      "slap bass",
+      "cheerful whistles"
+    ],
+    "mutation_genres": [
+      "tribal house",
+      "dark psybient",
+      "Afro-industrial",
+      "occult jazz",
+      "doom folk",
+      "Middle Eastern ambient",
+      "tribal techno",
+      "ethereal wave",
+      "gothic orchestral",
+      "experimental folk",
+      "occult trap",
+      "dark cinematic"
+    ],
+    "mutation_instruments": [
+      "udu drum",
+      "djembe",
+      "talking drum",
+      "kalimba",
+      "bone percussion",
+      "bass clarinet",
+      "shofar",
+      "tribal bells",
+      "electric cello",
+      "sitar drones",
+      "tape loops",
+      "granular textures"
+    ],
+    "mutation_moods": [
+      "primal",
+      "haunted",
+      "feverish",
+      "transcendent",
+      "sacrificial",
+      "dissociative",
+      "volatile",
+      "ecstatic",
+      "paranoid",
+      "ancestral",
+      "euphoric darkness",
+      "claustrophobic"
+    ]
+  },
+  {
+    "name": "Sea Shanty Tavern Folk",
+    "genres": [
+      "sea shanty",
+      "Russian folk",
+      "Balkan brass",
+      "Celtic punk",
+      "gothic country"
+    ],
+    "instruments": [
+      "accordion",
+      "balalaika",
+      "fiddle",
+      "nylon guitar",
+      "tin whistle",
+      "banjo",
+      "live hand percussion",
+      "mandolin"
+    ],
+    "playing": [
+      "swing feel",
+      "Swing shuffle",
+      "call-and-response vocals",
+      "chant-like backing vocals",
+      "Offbeat skank"
+    ],
+    "moods": [
+      "playful but melancholic",
+      "reckless tavern energy",
+      "sarcastic and rowdy",
+      "chaotic festival atmosphere"
+    ],
+    "eras": [
+      "live tavern recording feel",
+      "70s analogue warmth"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "chanting crowd vocals",
+      "layered call-and-response choir"
+    ],
+    "production": [
+      "clear melodic hook",
+      "dynamic arrangement with strong contrast",
+      "punchy drums"
+    ],
+    "excluded_genres": [
+      "Extratone",
+      "Harsh Noise Wall",
+      "Vaportrap",
+      "minimal techno"
+    ],
+    "excluded_instruments": [
+      "808 kick",
+      "arpeggiated modular synth",
+      "FM synth bells",
+      "sub bass",
+      "theremin"
+    ],
+    "mutation_genres": [
+      "thrash metal",
+      "surf rock",
+      "dark cabaret"
+    ],
+    "mutation_instruments": [
+      "twin distorted guitars",
+      "brass stabs",
+      "distorted organ"
+    ],
+    "mutation_moods": []
+  },
+  {
+    "name": "Silent Hill",
+    "genres": [
+      "dark ambient",
+      "industrial horror",
+      "ambient rock",
+      "trip hop",
+      "downtempo",
+      "experimental electronic",
+      "psychological horror",
+      "noise ambient",
+      "ethereal ambient",
+      "cinematic drone"
+    ],
+    "instruments": [
+      "detuned piano",
+      "granular synths",
+      "industrial percussion",
+      "ambient pads",
+      "distorted guitar",
+      "reverse textures",
+      "metallic hits",
+      "sub bass drones",
+      "radio static",
+      "tape noise",
+      "music box",
+      "bowed textures",
+      "low cello",
+      "distant bells"
+    ],
+    "playing": [
+      "slow evolving",
+      "minimal layering",
+      "dissonant harmonies",
+      "broken rhythms",
+      "mechanical pulses",
+      "sparse percussion",
+      "ambient swells",
+      "unsteady tempo feel",
+      "reverb-heavy textures",
+      "glitch accents",
+      "drone-focused",
+      "cinematic pacing"
+    ],
+    "moods": [
+      "eerie",
+      "melancholic",
+      "haunting",
+      "oppressive",
+      "isolated",
+      "dreamlike",
+      "unsettling",
+      "foggy",
+      "despairing",
+      "cold",
+      "claustrophobic",
+      "hypnotic"
+    ],
+    "eras": [
+      "late 90s",
+      "early 2000s",
+      "PS2-era horror",
+      "analog industrial",
+      "lo-fi digital",
+      "retro cinematic"
+    ],
+    "vocals": [
+      "whispered vocals",
+      "distant female vocals",
+      "breathy vocals",
+      "fragmented vocal chops",
+      "ethereal choir",
+      "ghostly harmonies",
+      "spoken word",
+      "restrained delivery"
+    ],
+    "production": [
+      "lo-fi ambience",
+      "tape saturation",
+      "heavy reverb",
+      "grainy textures",
+      "wide stereo fog",
+      "dark cinematic mix",
+      "muddy low mids",
+      "dynamic ambience",
+      "degraded audio",
+      "room noise",
+      "industrial layering",
+      "cold digital atmosphere"
+    ],
+    "excluded_genres": [
+      "happy hardcore",
+      "tropical house",
+      "pop punk",
+      "EDM festival",
+      "funk rock",
+      "reggaeton",
+      "country pop",
+      "uplifting trance",
+      "ska",
+      "dancehall"
+    ],
+    "excluded_instruments": [
+      "bright ukulele",
+      "brass section",
+      "slap bass",
+      "acoustic strumming",
+      "cheerful whistles",
+      "festival synth leads",
+      "clean funk guitar",
+      "bongo grooves",
+      "happy claps",
+      "party horns"
+    ],
+    "mutation_genres": [
+      "dark jazz",
+      "witch house",
+      "post-rock",
+      "doom metal",
+      "IDM",
+      "black ambient",
+      "neo-classical",
+      "dark synthwave",
+      "industrial techno",
+      "drone metal",
+      "cinematic orchestral",
+      "breakbeat"
+    ],
+    "mutation_instruments": [
+      "prepared piano",
+      "modular synth",
+      "bass clarinet",
+      "taiko drums",
+      "pipe organ",
+      "analog arpeggiator",
+      "contact mic percussion",
+      "violin drones",
+      "distorted cello",
+      "field recordings",
+      "modulated tape loops",
+      "choir textures"
+    ],
+    "mutation_moods": [
+      "paranoid",
+      "ritualistic",
+      "surreal",
+      "apocalyptic",
+      "sedated",
+      "violent tension",
+      "abandoned",
+      "cosmic dread",
+      "nocturnal",
+      "decayed",
+      "hallucinatory",
+      "funereal"
+    ]
+  },
+  {
+    "name": "Southern Gothic Cashcore",
+    "genres": [
+      "southern gothic",
+      "dark americana",
+      "outlaw folk",
+      "country noir",
+      "roots rock",
+      "gothic country"
+    ],
+    "instruments": [
+      "fingerpicked acoustic guitar",
+      "low electric guitar",
+      "upright bass",
+      "snare brushes",
+      "lap steel",
+      "reverb guitar swells",
+      "harmonica",
+      "piano"
+    ],
+    "playing": [
+      "steady walking rhythm",
+      "sparse arrangements",
+      "slow-burning dynamics",
+      "dry rhythmic strumming",
+      "moody instrumental breaks",
+      "heavy downbeats",
+      "minimal percussion",
+      "open atmospheric pacing"
+    ],
+    "moods": [
+      "noir-like",
+      "melancholic",
+      "dusty",
+      "grim",
+      "somber",
+      "tense",
+      "bleak",
+      "late-night"
+    ],
+    "eras": [
+      "classic outlaw era",
+      "vintage americana",
+      "old western soundtrack",
+      "1970s country noir",
+      "modern cinematic folk"
+    ],
+    "vocals": [
+      "low baritone vocals",
+      "gravelly male vocals",
+      "calm spoken delivery",
+      "stoic vocals",
+      "close-mic vocals",
+      "dark narrative tone"
+    ],
+    "production": [
+      "mono-inspired warmth",
+      "vintage tape texture",
+      "dark room ambience",
+      "minimal compression",
+      "natural drum sound",
+      "smoky reverbs",
+      "loose live feel",
+      "cinematic depth"
+    ],
+    "excluded_genres": [
+      "future bass",
+      "bubblegum pop",
+      "eurodance",
+      "metalcore",
+      "k-pop",
+      "drum and bass"
+    ],
+    "excluded_instruments": [
+      "bright EDM leads",
+      "synth arpeggiators",
+      "trap hi-hats",
+      "orchestral strings",
+      "brass stabs",
+      "autotuned vocal chops"
+    ],
+    "mutation_genres": [
+      "dark jazz",
+      "doom blues",
+      "industrial folk",
+      "desert ambient",
+      "psychedelic western",
+      "slowcore americana"
+    ],
+    "mutation_instruments": [
+      "analog synth drones",
+      "distorted cello",
+      "ambient field recordings",
+      "metallic percussion",
+      "sub bass drones",
+      "prepared piano"
+    ],
+    "mutation_moods": [
+      "ghost town atmosphere",
+      "burning desert tension",
+      "funereal calm",
+      "stormy isolation",
+      "haunted highway",
+      "midnight ritual"
+    ]
+  },
+  {
+    "name": "Techno",
+    "genres": [
+      "techno",
+      "minimal techno",
+      "industrial techno",
+      "melodic techno",
+      "peak time techno",
+      "warehouse techno"
+    ],
+    "instruments": [
+      "drum machines",
+      "analog synths",
+      "sub bass",
+      "percussion loops",
+      "acid bassline",
+      "atmospheric pads"
+    ],
+    "playing": [
+      "hypnotic repetition",
+      "driving groove",
+      "rolling percussion",
+      "gradual builds",
+      "layered transitions",
+      "steady pulse"
+    ],
+    "moods": [
+      "dark",
+      "focused",
+      "mechanical",
+      "tense",
+      "immersive",
+      "underground"
+    ],
+    "eras": [
+      "90s warehouse",
+      "2000s minimal",
+      "modern club",
+      "industrial era",
+      "contemporary festival",
+      "underground rave"
+    ],
+    "vocals": [
+      "spoken phrases",
+      "robotic vocals",
+      "processed chants",
+      "minimal vocals",
+      "detached male vocals",
+      "vocal samples"
+    ],
+    "production": [
+      "deep low end",
+      "spacious reverb",
+      "tight percussion",
+      "analog warmth",
+      "club-focused mix",
+      "industrial textures"
+    ],
+    "excluded_genres": [
+      "country",
+      "folk",
+      "acoustic pop",
+      "jazz fusion"
+    ],
+    "excluded_instruments": [
+      "banjo",
+      "ukulele",
+      "harmonica",
+      "orchestral harp"
+    ],
+    "mutation_genres": [
+      "darksynth",
+      "ebm",
+      "cyberpunk",
+      "ambient techno",
+      "trailer techno"
+    ],
+    "mutation_instruments": [
+      "cinematic drums",
+      "string ostinatos",
+      "granular textures",
+      "modular synths"
+    ],
+    "mutation_moods": [
+      "apocalyptic",
+      "futuristic",
+      "cold",
+      "cinematic"
+    ]
+  },
+  {
+    "name": "Thrash / Groove Metal Core",
+    "genres": [
+      "thrash metal",
+      "groove metal",
+      "industrial metal",
+      "blackened folk metal",
+      "Cybergrind",
+      "Alternative metal",
+      "Sludge metal",
+      "Grunge metal",
+      "speed metal",
+      "melodic metal",
+      "hard rock"
+    ],
+    "instruments": [
+      "twin distorted guitars",
+      "palm-muted rhythm guitars",
+      "wah guitar solo",
+      "tight snare",
+      "blast-beat drums",
+      "fuzz bass",
+      "twin guitars",
+      "guitar harmonies",
+      "guitar virtuoso",
+      "punchy drums",
+      "rhythmic drumming"
+    ],
+    "playing": [
+      "aggressive downpicking",
+      "Chugging palm-muted rhythm",
+      "Double-kick drive",
+      "galloping rhythm",
+      "stop-start riffing",
+      "Tremolo-picked momentum"
+    ],
+    "moods": [
+      "darkly triumphant",
+      "reckless tavern energy",
+      "paranoid urban tension",
+      "dark",
+      "ominous",
+      "sinister",
+      "aggressive"
+    ],
+    "eras": [
+      "early 90s metal mix",
+      "arena-sized mix",
+      "modern cinematic production",
+      "1980s era underground movement"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "raspy gang vocals",
+      "raw punk vocal delivery",
+      "melodic vocals",
+      "dramatic singing",
+      "energetic vocals",
+      "rapid-fire vocals"
+    ],
+    "production": [
+      "punchy drums",
+      "wide stereo guitars",
+      "tight low end",
+      "crisp transient attack",
+      "high-energy chorus lift"
+    ],
+    "excluded_genres": [
+      "dream pop",
+      "neo-soul",
+      "amapiano",
+      "highlife",
+      "baroque pop"
+    ],
+    "excluded_instruments": [
+      "accordion",
+      "theremin",
+      "Glass Armonica",
+      "Hydraulophone",
+      "tin whistle",
+      "marimba"
+    ],
+    "mutation_genres": [
+      "Dungeon synth",
+      "darkwave",
+      "Balkan brass"
+    ],
+    "mutation_instruments": [
+      "choir swells",
+      "taiko drums",
+      "orchestral strings"
+    ],
+    "mutation_moods": [
+      "haunted and cinematic"
+    ]
+  },
+  {
+    "name": "Thrash Metal Variant",
+    "genres": [
+      "thrash metal",
+      "groove metal",
+      "speed metal"
+    ],
+    "instruments": [
+      "twin distorted guitars",
+      "palm-muted rhythm guitars",
+      "wah guitar solo",
+      "tight snare"
+    ],
+    "playing": [
+      "aggressive downpicking",
+      "galloping rhythm",
+      "stop-start riffing",
+      "big singalong chorus"
+    ],
+    "moods": [
+      "darkly triumphant",
+      "reckless tavern energy"
+    ],
+    "eras": [
+      "early 90s metal mix",
+      "arena-sized mix"
+    ],
+    "vocals": [
+      "gritty male lead vocal",
+      "raspy gang vocals"
+    ],
+    "production": [
+      "punchy drums",
+      "wide stereo guitars",
+      "tight low end",
+      "crisp transient attack"
+    ],
+    "excluded_genres": [],
+    "excluded_instruments": [],
+    "mutation_genres": [],
+    "mutation_instruments": [],
+    "mutation_moods": []
+  },
+  {
+    "name": "Trance",
+    "genres": [
+      "trance",
+      "uplifting trance",
+      "progressive trance",
+      "psytrance",
+      "hard trance",
+      "vocal trance"
+    ],
+    "instruments": [
+      "supersaw leads",
+      "arpeggiated synths",
+      "sub bass",
+      "pads",
+      "plucks",
+      "electronic drums"
+    ],
+    "playing": [
+      "long builds",
+      "euphoric drops",
+      "driving basslines",
+      "layered melodies",
+      "energy lifts",
+      "extended transitions"
+    ],
+    "moods": [
+      "euphoric",
+      "emotional",
+      "uplifting",
+      "dreamlike",
+      "epic",
+      "transcendent"
+    ],
+    "eras": [
+      "late 90s",
+      "millennium trance",
+      "festival era",
+      "modern trance",
+      "classic rave",
+      "future trance"
+    ],
+    "vocals": [
+      "ethereal female vocals",
+      "airy vocals",
+      "uplifting vocals",
+      "layered harmonies",
+      "vocal hooks",
+      "processed vocals"
+    ],
+    "production": [
+      "huge reverb",
+      "wide synths",
+      "polished mastering",
+      "atmospheric depth",
+      "clean mix",
+      "festival-scale sound"
+    ],
+    "excluded_genres": [
+      "blues",
+      "country",
+      "garage rock",
+      "acoustic folk"
+    ],
+    "excluded_instruments": [
+      "banjo",
+      "harmonica",
+      "mandolin",
+      "upright bass"
+    ],
+    "mutation_genres": [
+      "orchestral trance",
+      "cinematic trance",
+      "future rave",
+      "ambient trance",
+      "darksynth trance"
+    ],
+    "mutation_instruments": [
+      "orchestral strings",
+      "choirs",
+      "cinematic percussion",
+      "hybrid synths"
+    ],
+    "mutation_moods": [
+      "celestial",
+      "heroic",
+      "mystical",
+      "otherworldly"
+    ]
+  }
+]

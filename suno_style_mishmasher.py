@@ -43,6 +43,9 @@ from PySide6.QtWidgets import (
     QPushButton,
     QPlainTextEdit,
     QSpinBox,
+    QSlider,
+    QScrollArea,
+    QSplitter,
     QTabWidget,
     QTextEdit,
     QVBoxLayout,
@@ -803,13 +806,17 @@ class GeneratorSettings:
     lock_base_genre: bool = True
     blend_enabled: bool = False
     blend_styles: List[str] = field(default_factory=list)
+    blend_weights: Dict[str, int] = field(default_factory=dict)
+    source_filter_enabled: bool = False
+    source_styles: List[str] = field(default_factory=list)
 
 
 class Mishmasher(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Suno Style Mishmasher")
-        self.resize(1120, 760)
+        self.resize(1380, 900)
+        self.setMinimumSize(900, 650)
 
         self.db = self.load_db()
         self.settings = GeneratorSettings()
@@ -894,23 +901,30 @@ class Mishmasher(QMainWindow):
 
     def build_generator_tab(self) -> QWidget:
         page = QWidget()
-        root = QHBoxLayout(page)
+        root = QVBoxLayout(page)
+        root.setContentsMargins(8, 8, 8, 8)
 
-        left = QVBoxLayout()
-        root.addLayout(left, 1)
+        splitter = QSplitter(Qt.Horizontal)
+        root.addWidget(splitter, 1)
+
+        # LEFT SIDE: all controls in a scroll area.
+        controls_widget = QWidget()
+        controls_layout = QVBoxLayout(controls_widget)
+        controls_layout.setContentsMargins(8, 8, 8, 8)
+        controls_layout.setSpacing(10)
 
         start_group = QGroupBox("Start here")
         start_layout = QVBoxLayout(start_group)
 
-        start_layout.addWidget(QLabel("Base prompt or starting style"))
+        start_layout.addWidget(QLabel("Base prompt or starting genre"))
         self.base_prompt_edit = QPlainTextEdit()
         self.base_prompt_edit.setPlaceholderText(
             "Examples:\n"
-            "grunge rock, raw male vocal\n"
-            "industrial metal with cinematic tension\n"
-            "dark fantasy orchestral horror cue"
+            "grunge rock with cinematic atmosphere\n"
+            "industrial metal soundtrack\n"
+            "dark fantasy orchestral horror"
         )
-        self.base_prompt_edit.setMaximumHeight(110)
+        self.base_prompt_edit.setMaximumHeight(95)
         self.base_prompt_edit.textChanged.connect(self.generate_prompt)
         start_layout.addWidget(self.base_prompt_edit)
 
@@ -919,71 +933,64 @@ class Mishmasher(QMainWindow):
         self.negative_prompt_edit.setPlaceholderText(
             "Examples:\n"
             "bagpipes, ukulele, accordion\n"
-            "no EDM drops; avoid comedy vocals; without theremin"
+            "no EDM drops; without comedy vocals"
         )
         self.negative_prompt_edit.setMaximumHeight(80)
         self.negative_prompt_edit.textChanged.connect(self.on_negative_prompt_changed)
         start_layout.addWidget(self.negative_prompt_edit)
 
-        style_row = QFormLayout()
-        self.base_style_combo = QComboBox()
-        self.base_style_combo.currentTextChanged.connect(self.generate_prompt)
-        style_row.addRow("Base style", self.base_style_combo)
-        start_layout.addLayout(style_row)
-
-        blend_group = QGroupBox("Blend base styles")
-        blend_layout = QVBoxLayout(blend_group)
-        self.blend_check = QCheckBox("Blend multiple base styles")
-        self.blend_check.setChecked(False)
-        self.blend_check.stateChanged.connect(self.generate_prompt)
-        blend_layout.addWidget(self.blend_check)
-        blend_hint = QLabel("Select two or more association styles to merge their genres, instruments, moods, production notes, exclusions, and mutation pools.")
-        blend_hint.setWordWrap(True)
-        blend_layout.addWidget(blend_hint)
-        self.blend_styles_list = QListWidget()
-        self.blend_styles_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
-        self.blend_styles_list.setMaximumHeight(125)
-        self.blend_styles_list.itemSelectionChanged.connect(self.generate_prompt)
-        blend_layout.addWidget(self.blend_styles_list)
-        blend_buttons = QHBoxLayout()
-        add_current_blend_btn = QPushButton("Add current base style")
-        add_current_blend_btn.clicked.connect(self.add_current_base_style_to_blend)
-        clear_blend_btn = QPushButton("Clear blend")
-        clear_blend_btn.clicked.connect(self.clear_blend_selection)
-        blend_buttons.addWidget(add_current_blend_btn)
-        blend_buttons.addWidget(clear_blend_btn)
-        blend_layout.addLayout(blend_buttons)
-        start_layout.addWidget(blend_group)
-
-        quick_row = QHBoxLayout()
-        self.auto_match_check = QCheckBox("Auto-match from base prompt")
-        self.auto_match_check.setChecked(True)
-        self.auto_match_check.stateChanged.connect(self.generate_prompt)
-        self.append_only_check = QCheckBox("Append extras to my base prompt")
-        self.append_only_check.setChecked(True)
-        self.append_only_check.stateChanged.connect(self.generate_prompt)
-        quick_row.addWidget(self.auto_match_check)
-        quick_row.addWidget(self.append_only_check)
-        start_layout.addLayout(quick_row)
-
-        add_row = QHBoxLayout()
+        quick_buttons = QHBoxLayout()
         add_genre_btn = QPushButton("Add base as genre")
         add_genre_btn.clicked.connect(self.add_base_prompt_as_genre)
-        add_style_btn = QPushButton("Create base style")
-        add_style_btn.clicked.connect(self.create_base_style_from_prompt)
-        add_row.addWidget(add_genre_btn)
-        add_row.addWidget(add_style_btn)
-        start_layout.addLayout(add_row)
+        create_style_btn = QPushButton("Create base style")
+        create_style_btn.clicked.connect(self.create_base_style_from_prompt)
+        clear_btn = QPushButton("Clear / Reset prompts")
+        clear_btn.clicked.connect(self.clear_prompt_workspace)
+        quick_buttons.addWidget(add_genre_btn)
+        quick_buttons.addWidget(create_style_btn)
+        quick_buttons.addWidget(clear_btn)
+        start_layout.addLayout(quick_buttons)
 
-        left.addWidget(start_group)
+        controls_layout.addWidget(start_group)
 
-        control_group = QGroupBox("Style control")
-        form = QFormLayout(control_group)
+        action_group = QGroupBox("Actions")
+        action_layout = QHBoxLayout(action_group)
+        gen_btn = QPushButton("Generate")
+        gen_btn.clicked.connect(self.generate_prompt)
+        save_btn = QPushButton("Save prompt")
+        save_btn.clicked.connect(self.save_prompt_to_file)
+        action_layout.addWidget(gen_btn)
+        action_layout.addWidget(save_btn)
+        action_layout.addStretch(1)
+        controls_layout.addWidget(action_group)
+
+        options = QGroupBox("Generation controls")
+        form = QFormLayout(options)
+        form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
 
         self.mode_combo = QComboBox()
         self.mode_combo.addItems(["Coherent", "Experimental", "Chaos", "Focused", "Dense"])
         self.mode_combo.currentTextChanged.connect(self.generate_prompt)
         form.addRow("Mode", self.mode_combo)
+
+        self.use_assoc_check = QCheckBox("Use association engine")
+        self.use_assoc_check.setChecked(True)
+        self.use_assoc_check.stateChanged.connect(self.generate_prompt)
+        form.addRow("Associations", self.use_assoc_check)
+
+        self.base_style_combo = QComboBox()
+        self.base_style_combo.currentTextChanged.connect(self.generate_prompt)
+        form.addRow("Base style", self.base_style_combo)
+
+        self.auto_match_check = QCheckBox("Auto-match base style from text")
+        self.auto_match_check.setChecked(True)
+        self.auto_match_check.stateChanged.connect(self.generate_prompt)
+        form.addRow("Auto-match", self.auto_match_check)
+
+        self.simple_append_check = QCheckBox("Append extras to base prompt")
+        self.simple_append_check.setChecked(True)
+        self.simple_append_check.stateChanged.connect(self.generate_prompt)
+        form.addRow("Append mode", self.simple_append_check)
 
         self.cohesion_spin = QSpinBox()
         self.cohesion_spin.setRange(0, 100)
@@ -997,7 +1004,22 @@ class Mishmasher(QMainWindow):
         self.weirdness_spin.setValue(15)
         self.weirdness_spin.setSuffix("%")
         self.weirdness_spin.valueChanged.connect(self.generate_prompt)
-        form.addRow("Weirdness", self.weirdness_spin)
+        form.addRow("Mutation / weirdness", self.weirdness_spin)
+
+        self.allow_excluded_check = QCheckBox("Allow unlikely/excluded pairings")
+        self.allow_excluded_check.setChecked(False)
+        self.allow_excluded_check.stateChanged.connect(self.generate_prompt)
+        form.addRow("Exclusions", self.allow_excluded_check)
+
+        self.lock_base_genre_check = QCheckBox("Keep base style represented")
+        self.lock_base_genre_check.setChecked(True)
+        self.lock_base_genre_check.stateChanged.connect(self.generate_prompt)
+        form.addRow("Base lock", self.lock_base_genre_check)
+
+        self.seed_box = QLineEdit()
+        self.seed_box.setPlaceholderText("Optional seed")
+        self.seed_box.textChanged.connect(self.generate_prompt)
+        form.addRow("Seed", self.seed_box)
 
         self.max_chars_spin = QSpinBox()
         self.max_chars_spin.setRange(200, 1000)
@@ -1005,57 +1027,76 @@ class Mishmasher(QMainWindow):
         self.max_chars_spin.valueChanged.connect(self.generate_prompt)
         form.addRow("Max chars", self.max_chars_spin)
 
-        left.addWidget(control_group)
+        controls_layout.addWidget(options)
 
-        actions = QHBoxLayout()
-        gen_btn = QPushButton("Generate")
-        gen_btn.clicked.connect(self.generate_prompt)
-        copy_btn = QPushButton("Copy")
-        copy_btn.clicked.connect(self.copy_prompt)
-        save_btn = QPushButton("Save prompt")
-        save_btn.clicked.connect(self.save_prompt_to_file)
-        actions.addWidget(gen_btn)
-        actions.addWidget(copy_btn)
-        actions.addWidget(save_btn)
-        left.addLayout(actions)
+        blend_group = QGroupBox("Blend styles")
+        blend_layout = QVBoxLayout(blend_group)
 
-        advanced = QGroupBox("Advanced options")
-        advanced_form = QFormLayout(advanced)
+        self.blend_enabled_check = QCheckBox("Blend multiple base styles")
+        self.blend_enabled_check.setChecked(False)
+        self.blend_enabled_check.stateChanged.connect(self.generate_prompt)
+        blend_layout.addWidget(self.blend_enabled_check)
 
-        self.use_assoc_check = QCheckBox("Use association engine")
-        self.use_assoc_check.setChecked(True)
-        self.use_assoc_check.stateChanged.connect(self.generate_prompt)
-        advanced_form.addRow("Associations", self.use_assoc_check)
+        blend_hint = QLabel("Select styles and optionally adjust their weights. Weight 0 disables that style for the blend.")
+        blend_hint.setWordWrap(True)
+        blend_layout.addWidget(blend_hint)
 
-        self.allow_excluded_check = QCheckBox("Allow unlikely/excluded pairings")
-        self.allow_excluded_check.setChecked(False)
-        self.allow_excluded_check.stateChanged.connect(self.generate_prompt)
-        advanced_form.addRow("Exclusions", self.allow_excluded_check)
+        self.blend_scroll = QScrollArea()
+        self.blend_scroll.setWidgetResizable(True)
+        self.blend_scroll.setMinimumHeight(160)
+        self.blend_scroll.setMaximumHeight(260)
+        self.blend_styles_container = QWidget()
+        self.blend_styles_layout = QVBoxLayout(self.blend_styles_container)
+        self.blend_styles_layout.setContentsMargins(4, 4, 4, 4)
+        self.blend_scroll.setWidget(self.blend_styles_container)
+        blend_layout.addWidget(self.blend_scroll)
 
-        self.lock_base_genre_check = QCheckBox("Keep base style represented")
-        self.lock_base_genre_check.setChecked(True)
-        self.lock_base_genre_check.stateChanged.connect(self.generate_prompt)
-        advanced_form.addRow("Base lock", self.lock_base_genre_check)
+        controls_layout.addWidget(blend_group)
 
-        self.seed_box = QLineEdit()
-        self.seed_box.setPlaceholderText("Optional seed for repeatable results")
-        self.seed_box.textChanged.connect(self.generate_prompt)
-        advanced_form.addRow("Seed", self.seed_box)
+        source_group = QGroupBox("Prompt source filter")
+        source_layout = QVBoxLayout(source_group)
 
-        left.addWidget(advanced)
+        self.source_filter_enabled_check = QCheckBox("Restrict generation to selected base styles")
+        self.source_filter_enabled_check.setChecked(False)
+        self.source_filter_enabled_check.stateChanged.connect(self.generate_prompt)
+        source_layout.addWidget(self.source_filter_enabled_check)
 
-        counts = QGroupBox("Advanced ingredient counts")
+        source_hint = QLabel("When enabled, broad random picks are limited to the selected source styles instead of the full database.")
+        source_hint.setWordWrap(True)
+        source_layout.addWidget(source_hint)
+
+        self.source_styles_list = QListWidget()
+        self.source_styles_list.setSelectionMode(QListWidget.MultiSelection)
+        self.source_styles_list.setMinimumHeight(150)
+        self.source_styles_list.setMaximumHeight(240)
+        self.source_styles_list.itemSelectionChanged.connect(self.generate_prompt)
+        source_layout.addWidget(self.source_styles_list)
+
+        source_buttons = QHBoxLayout()
+        select_all_sources_btn = QPushButton("All")
+        select_all_sources_btn.clicked.connect(self.select_all_source_styles)
+        clear_sources_btn = QPushButton("None")
+        clear_sources_btn.clicked.connect(self.clear_source_styles)
+        source_buttons.addWidget(select_all_sources_btn)
+        source_buttons.addWidget(clear_sources_btn)
+        source_buttons.addStretch(1)
+        source_layout.addLayout(source_buttons)
+
+        controls_layout.addWidget(source_group)
+
+        counts = QGroupBox("Ingredient counts")
         count_form = QFormLayout(counts)
+        count_form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         self.count_spins: Dict[str, QSpinBox] = {}
         for label, key, value in [
             ("Extra genres", "genre_count", 1),
             ("Instruments", "instrument_count", 4),
             ("Playing directions", "playing_count", 3),
             ("Moods", "mood_count", 2),
-            ("Era/texture", "era_count", 1),
+            ("Era / texture", "era_count", 1),
             ("Vocals", "vocal_count", 1),
             ("Production notes", "production_count", 3),
-            ("Avoid notes", "avoid_count", 1),
+            ("Avoid / negative", "avoid_count", 1),
         ]:
             spin = QSpinBox()
             spin.setRange(0, 12)
@@ -1063,26 +1104,30 @@ class Mishmasher(QMainWindow):
             spin.valueChanged.connect(self.generate_prompt)
             self.count_spins[key] = spin
             count_form.addRow(label, spin)
-        left.addWidget(counts)
+        controls_layout.addWidget(counts)
 
-        explanation = QLabel(
-            "Tip: for normal use, type a base prompt, choose a base style, then use Coherent or Experimental. "
-            "Chaos ignores associations and uses the full database."
-        )
-        explanation.setWordWrap(True)
-        left.addWidget(explanation)
-        left.addStretch(1)
+        controls_layout.addStretch(1)
 
-        right = QVBoxLayout()
-        root.addLayout(right, 2)
+        controls_scroll = QScrollArea()
+        controls_scroll.setWidgetResizable(True)
+        controls_scroll.setWidget(controls_widget)
+        controls_scroll.setMinimumWidth(360)
+        splitter.addWidget(controls_scroll)
+
+        # RIGHT SIDE: output fields, history, breakdown. Also scrollable.
+        output_widget = QWidget()
+        output_layout = QVBoxLayout(output_widget)
+        output_layout.setContentsMargins(8, 8, 8, 8)
+        output_layout.setSpacing(10)
 
         main_output_group = QGroupBox("Suno main prompt")
         main_output_layout = QVBoxLayout(main_output_group)
 
         self.output = QPlainTextEdit()
         self.output.setPlaceholderText("Generated Suno style prompt appears here.")
+        self.output.setMinimumHeight(150)
         self.output.textChanged.connect(self.update_count)
-        main_output_layout.addWidget(self.output, 1)
+        main_output_layout.addWidget(self.output)
 
         self.char_label = QLabel("0 / 1000")
         self.char_label.setAlignment(Qt.AlignRight)
@@ -1098,14 +1143,15 @@ class Mishmasher(QMainWindow):
         main_button_row.addStretch(1)
         main_output_layout.addLayout(main_button_row)
 
-        right.addWidget(main_output_group, 1)
+        output_layout.addWidget(main_output_group)
 
         negative_output_group = QGroupBox("Suno negative prompt")
         negative_output_layout = QVBoxLayout(negative_output_group)
 
         self.negative_output = QPlainTextEdit()
-        self.negative_output.setPlaceholderText("Generated negative prompt appears here. Copy this into Suno's separate negative prompt field if you want to use it.")
-        self.negative_output.setMaximumHeight(110)
+        self.negative_output.setPlaceholderText("Generated negative prompt appears here.")
+        self.negative_output.setMinimumHeight(90)
+        self.negative_output.setMaximumHeight(140)
         negative_output_layout.addWidget(self.negative_output)
 
         negative_button_row = QHBoxLayout()
@@ -1118,13 +1164,14 @@ class Mishmasher(QMainWindow):
         negative_button_row.addStretch(1)
         negative_output_layout.addLayout(negative_button_row)
 
-        right.addWidget(negative_output_group)
+        output_layout.addWidget(negative_output_group)
 
         history_group = QGroupBox("Prompt history")
         history_layout = QVBoxLayout(history_group)
 
         self.history_list = QListWidget()
-        self.history_list.setMaximumHeight(150)
+        self.history_list.setMinimumHeight(140)
+        self.history_list.setMaximumHeight(220)
         self.history_list.itemDoubleClicked.connect(self.restore_history_item)
         history_layout.addWidget(self.history_list)
 
@@ -1141,15 +1188,103 @@ class Mishmasher(QMainWindow):
         history_buttons.addStretch(1)
         history_layout.addLayout(history_buttons)
 
-        right.addWidget(history_group)
+        output_layout.addWidget(history_group)
+
+        breakdown_group = QGroupBox("Breakdown")
+        breakdown_layout = QVBoxLayout(breakdown_group)
 
         self.breakdown = QTextEdit()
         self.breakdown.setReadOnly(True)
         self.breakdown.setMinimumHeight(180)
-        right.addWidget(self.breakdown)
+        breakdown_layout.addWidget(self.breakdown)
+
+        output_layout.addWidget(breakdown_group, 1)
+
+        output_scroll = QScrollArea()
+        output_scroll.setWidgetResizable(True)
+        output_scroll.setWidget(output_widget)
+        output_scroll.setMinimumWidth(520)
+        splitter.addWidget(output_scroll)
+
+        splitter.setStretchFactor(0, 0)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([460, 900])
 
         return page
 
+
+    def rebuild_blend_style_controls(self) -> None:
+        if not hasattr(self, "blend_styles_layout"):
+            return
+
+        while self.blend_styles_layout.count():
+            item = self.blend_styles_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        self.blend_style_checks = {}
+        self.blend_style_weights = {}
+
+        for name in sorted(self.db.get("associations", {}).keys()):
+            row_widget = QWidget()
+            row = QHBoxLayout(row_widget)
+            row.setContentsMargins(0, 0, 0, 0)
+
+            check = QCheckBox(name)
+            check.stateChanged.connect(self.generate_prompt)
+
+            weight = QSpinBox()
+            weight.setRange(0, 100)
+            weight.setValue(50)
+            weight.setSuffix("%")
+            weight.valueChanged.connect(self.generate_prompt)
+            weight.setMaximumWidth(90)
+
+            row.addWidget(check, 1)
+            row.addWidget(weight)
+
+            self.blend_styles_layout.addWidget(row_widget)
+            self.blend_style_checks[name] = check
+            self.blend_style_weights[name] = weight
+
+        self.blend_styles_layout.addStretch(1)
+
+    def refresh_source_styles_list(self) -> None:
+        if not hasattr(self, "source_styles_list"):
+            return
+
+        selected = set(self.get_selected_source_styles())
+        self.source_styles_list.blockSignals(True)
+        self.source_styles_list.clear()
+
+        for name in sorted(self.db.get("associations", {}).keys()):
+            item = QListWidgetItem(name)
+            self.source_styles_list.addItem(item)
+            if name in selected:
+                item.setSelected(True)
+
+        self.source_styles_list.blockSignals(False)
+
+    def get_selected_source_styles(self) -> List[str]:
+        if not hasattr(self, "source_styles_list"):
+            return []
+        return [item.text() for item in self.source_styles_list.selectedItems()]
+
+    def select_all_source_styles(self) -> None:
+        if not hasattr(self, "source_styles_list"):
+            return
+        self.source_styles_list.blockSignals(True)
+        for i in range(self.source_styles_list.count()):
+            self.source_styles_list.item(i).setSelected(True)
+        self.source_styles_list.blockSignals(False)
+        self.generate_prompt()
+
+    def clear_source_styles(self) -> None:
+        if not hasattr(self, "source_styles_list"):
+            return
+        self.source_styles_list.clearSelection()
+        self.generate_prompt()
 
     def build_database_tab(self) -> QWidget:
         page = QWidget()
@@ -1379,6 +1514,37 @@ class Mishmasher(QMainWindow):
         button_row.addWidget(clear_btn)
         button_row.addStretch(1)
         root.addLayout(button_row)
+
+        ios_group = QGroupBox("Python / iOS Sync")
+        ios_layout = QVBoxLayout(ios_group)
+        ios_help = QLabel(
+            "Use these buttons to move data between the Python desktop app and the iOS app. "
+            "Full database JSON keeps everything. Import-pack JSON shares only base-style associations."
+        )
+        ios_help.setWordWrap(True)
+        ios_layout.addWidget(ios_help)
+
+        ios_button_row_1 = QHBoxLayout()
+        import_ios_db = QPushButton("Import iOS database JSON")
+        import_ios_db.clicked.connect(self.import_ios_database)
+        export_ios_db = QPushButton("Export iOS database JSON")
+        export_ios_db.clicked.connect(self.export_ios_database)
+        ios_button_row_1.addWidget(import_ios_db)
+        ios_button_row_1.addWidget(export_ios_db)
+        ios_button_row_1.addStretch(1)
+        ios_layout.addLayout(ios_button_row_1)
+
+        ios_button_row_2 = QHBoxLayout()
+        import_ios_packs = QPushButton("Import iOS pack JSON")
+        import_ios_packs.clicked.connect(self.import_ios_pack_file)
+        export_ios_packs = QPushButton("Export iOS pack JSON")
+        export_ios_packs.clicked.connect(self.export_ios_pack_json)
+        ios_button_row_2.addWidget(import_ios_packs)
+        ios_button_row_2.addWidget(export_ios_packs)
+        ios_button_row_2.addStretch(1)
+        ios_layout.addLayout(ios_button_row_2)
+
+        root.addWidget(ios_group)
 
         self.pack_status = QTextEdit()
         self.pack_status.setReadOnly(True)
@@ -1904,21 +2070,104 @@ class Mishmasher(QMainWindow):
                 self.base_style_combo.setCurrentIndex(index)
         self.base_style_combo.blockSignals(False)
 
+        if hasattr(self, "rebuild_blend_style_controls"):
+            self.rebuild_blend_style_controls()
+        if hasattr(self, "refresh_source_styles_list"):
+            self.refresh_source_styles_list()
+
+        names = sorted(self.db.get("associations", {}).keys())
+
         if hasattr(self, "blend_styles_list"):
             selected_before = set(self.selected_blend_styles())
             self.blend_styles_list.blockSignals(True)
             self.blend_styles_list.clear()
-            for name in sorted(self.db.get("associations", {}).keys()):
+            for name in names:
                 item = QListWidgetItem(name)
                 self.blend_styles_list.addItem(item)
                 if name in selected_before:
                     item.setSelected(True)
             self.blend_styles_list.blockSignals(False)
 
+        if hasattr(self, "source_styles_list"):
+            selected_sources_before = set(self.selected_source_styles())
+            self.source_styles_list.blockSignals(True)
+            self.source_styles_list.clear()
+            for name in names:
+                item = QListWidgetItem(name)
+                self.source_styles_list.addItem(item)
+                if name in selected_sources_before:
+                    item.setSelected(True)
+            self.source_styles_list.blockSignals(False)
+
+        if hasattr(self, "refresh_blend_weight_sliders"):
+            self.refresh_blend_weight_sliders()
+
     def selected_blend_styles(self) -> List[str]:
         if not hasattr(self, "blend_styles_list"):
             return []
-        return [item.text() for item in self.blend_styles_list.selectedItems()]
+        return list(self.get_selected_blend_styles_with_weights().keys())
+
+    def selected_blend_weights(self) -> Dict[str, int]:
+        weights: Dict[str, int] = {}
+        selected = set(self.selected_blend_styles())
+        if not hasattr(self, "blend_weight_sliders"):
+            return weights
+        for name, slider in self.blend_weight_sliders.items():
+            if name in selected:
+                weights[name] = int(slider.value())
+        return weights
+
+    def selected_source_styles(self) -> List[str]:
+        if not hasattr(self, "source_styles_list"):
+            return []
+        return [item.text() for item in self.source_styles_list.selectedItems()]
+
+    def select_all_source_styles(self) -> None:
+        if not hasattr(self, "source_styles_list"):
+            return
+        self.source_styles_list.blockSignals(True)
+        for i in range(self.source_styles_list.count()):
+            self.source_styles_list.item(i).setSelected(True)
+        self.source_styles_list.blockSignals(False)
+        if hasattr(self, "source_filter_check"):
+            self.source_filter_check.setChecked(True)
+        self.generate_prompt()
+
+    def clear_source_styles(self) -> None:
+        if not hasattr(self, "source_styles_list"):
+            return
+        self.source_styles_list.clearSelection()
+        self.generate_prompt()
+
+    def refresh_blend_weight_sliders(self) -> None:
+        if not hasattr(self, "blend_weight_layout"):
+            return
+        while self.blend_weight_layout.count():
+            item = self.blend_weight_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+        old_values = {name: slider.value() for name, slider in getattr(self, "blend_weight_sliders", {}).items()}
+        self.blend_weight_sliders = {}
+        for name in sorted(self.db.get("associations", {}).keys()):
+            row = QWidget()
+            row_layout = QHBoxLayout(row)
+            row_layout.setContentsMargins(0, 0, 0, 0)
+            label = QLabel(name)
+            label.setMinimumWidth(180)
+            slider = QSlider(Qt.Orientation.Horizontal)
+            slider.setRange(0, 100)
+            slider.setValue(int(old_values.get(name, 50)))
+            value_label = QLabel(str(slider.value()))
+            value_label.setMinimumWidth(28)
+            slider.valueChanged.connect(lambda value, lbl=value_label: lbl.setText(str(value)))
+            slider.valueChanged.connect(self.generate_prompt)
+            self.blend_weight_sliders[name] = slider
+            row_layout.addWidget(label)
+            row_layout.addWidget(slider, 1)
+            row_layout.addWidget(value_label)
+            self.blend_weight_layout.addWidget(row)
+        self.blend_weight_layout.addStretch(1)
 
     def clear_blend_selection(self) -> None:
         if not hasattr(self, "blend_styles_list"):
@@ -2137,6 +2386,110 @@ class Mishmasher(QMainWindow):
         except Exception as exc:
             QMessageBox.warning(self, "Invalid JSON", str(exc))
 
+    def make_ios_compatible_database(self) -> dict:
+        """Return a database JSON shape shared by the Python and iOS versions.
+
+        The iOS app expects the same top-level categories plus bundles and
+        associations. We sync association terms into the main lists first so
+        iOS can generate immediately after import.
+        """
+        self.sync_all_associations_to_database(silent=True)
+        db = json.loads(json.dumps(self.db))
+        for key in ["genres", "instruments", "playing", "moods", "eras", "vocals", "production", "avoid"]:
+            if not isinstance(db.get(key), list):
+                db[key] = []
+        if not isinstance(db.get("bundles"), dict):
+            db["bundles"] = {}
+        if not isinstance(db.get("associations"), dict):
+            db["associations"] = {}
+        return db
+
+    def make_ios_import_packs(self) -> list[dict]:
+        """Export associations using the iOS/Python import-pack schema.
+
+        iOS ImportPack expects excluded_genres/excluded_instruments and
+        mutation_* arrays, while the internal database uses exclude and
+        mutation_candidates.
+        """
+        packs: list[dict] = []
+        associations = self.db.get("associations", {})
+        if not isinstance(associations, dict):
+            return packs
+
+        for name in sorted(associations.keys(), key=lambda x: str(x).casefold()):
+            assoc = associations.get(name, {})
+            if not isinstance(assoc, dict):
+                continue
+            exclude = assoc.get("exclude", {}) if isinstance(assoc.get("exclude", {}), dict) else {}
+            mutation = assoc.get("mutation_candidates", {}) if isinstance(assoc.get("mutation_candidates", {}), dict) else {}
+            packs.append({
+                "name": str(name),
+                "genres": list(assoc.get("genres", []) or []),
+                "instruments": list(assoc.get("instruments", []) or []),
+                "playing": list(assoc.get("playing", []) or []),
+                "moods": list(assoc.get("moods", []) or []),
+                "eras": list(assoc.get("eras", []) or []),
+                "vocals": list(assoc.get("vocals", []) or []),
+                "production": list(assoc.get("production", []) or []),
+                "excluded_genres": list(exclude.get("genres", []) or []),
+                "excluded_instruments": list(exclude.get("instruments", []) or []),
+                "mutation_genres": list(mutation.get("genres", []) or []),
+                "mutation_instruments": list(mutation.get("instruments", []) or []),
+                "mutation_moods": list(mutation.get("moods", []) or []),
+            })
+        return packs
+
+    def import_ios_database(self) -> None:
+        # iOS full database JSON is the same shared database shape.
+        self.import_full_database()
+
+    def export_ios_database(self) -> None:
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export iOS-compatible database JSON",
+            "suno_style_database_ios.json",
+            "JSON Files (*.json)",
+        )
+        if not path:
+            return
+        try:
+            db = self.make_ios_compatible_database()
+            Path(path).write_text(json.dumps(db, indent=2, ensure_ascii=False), encoding="utf-8")
+            QMessageBox.information(
+                self,
+                "iOS database exported",
+                "Exported an iOS-compatible full database JSON.\n\n"
+                "Move this file to the iOS app through Files/iCloud Drive and use Import Full Database JSON.",
+            )
+        except Exception as exc:
+            QMessageBox.warning(self, "Export failed", str(exc))
+
+    def import_ios_pack_file(self) -> None:
+        # iOS pack JSON is a JSON array of ImportPack objects. The existing
+        # pack importer accepts that shape already.
+        self.import_pack_file()
+
+    def export_ios_pack_json(self) -> None:
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export iOS-compatible import packs",
+            "suno_style_import_packs_ios.json",
+            "JSON Files (*.json)",
+        )
+        if not path:
+            return
+        try:
+            packs = self.make_ios_import_packs()
+            Path(path).write_text(json.dumps(packs, indent=2, ensure_ascii=False), encoding="utf-8")
+            QMessageBox.information(
+                self,
+                "iOS packs exported",
+                f"Exported {len(packs)} association pack(s) in the iOS/Python shared import-pack format.\n\n"
+                "Use this when you only want to move base styles/associations, not the entire database.",
+            )
+        except Exception as exc:
+            QMessageBox.warning(self, "Export failed", str(exc))
+
     def import_full_database(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
             self,
@@ -2187,15 +2540,18 @@ class Mishmasher(QMainWindow):
             base_prompt=self.base_prompt_edit.toPlainText().strip() if hasattr(self, "base_prompt_edit") else "",
             negative_prompt=self.negative_prompt_edit.toPlainText().strip() if hasattr(self, "negative_prompt_edit") else "",
             auto_match_base_style=self.auto_match_check.isChecked() if hasattr(self, "auto_match_check") else True,
-            simple_append_only=self.append_only_check.isChecked() if hasattr(self, "append_only_check") else True,
+            simple_append_only=self.simple_append_check.isChecked() if hasattr(self, "simple_append_check") else True,
             use_associations=self.use_assoc_check.isChecked(),
             base_style=self.base_style_combo.currentText() if hasattr(self, "base_style_combo") else "None",
             cohesion=self.cohesion_spin.value() if hasattr(self, "cohesion_spin") else 80,
             weirdness=self.weirdness_spin.value() if hasattr(self, "weirdness_spin") else 15,
             allow_excluded=self.allow_excluded_check.isChecked() if hasattr(self, "allow_excluded_check") else False,
             lock_base_genre=self.lock_base_genre_check.isChecked() if hasattr(self, "lock_base_genre_check") else True,
-            blend_enabled=self.blend_check.isChecked() if hasattr(self, "blend_check") else False,
-            blend_styles=self.selected_blend_styles() if hasattr(self, "blend_styles_list") else [],
+            blend_enabled=self.blend_enabled_check.isChecked() if hasattr(self, "blend_enabled_check") else False,
+            blend_styles=list(self.get_selected_blend_styles_with_weights().keys()) if hasattr(self, "blend_style_checks") else [],
+            blend_weights=self.get_selected_blend_styles_with_weights() if hasattr(self, "blend_style_weights") else {},
+            source_filter_enabled=self.source_filter_enabled_check.isChecked() if hasattr(self, "source_filter_enabled_check") else False,
+            source_styles=self.selected_source_styles() if hasattr(self, "source_styles_list") else [],
         )
 
     def clean_base_prompt(self) -> str:
@@ -2306,7 +2662,7 @@ class Mishmasher(QMainWindow):
                 target.append(item)
                 seen.add(key)
 
-    def merge_associations(self, names: List[str]) -> dict | None:
+    def merge_associations(self, names: List[str], weights: Dict[str, int] | None = None) -> dict | None:
         clean_names: List[str] = []
         seen_names = set()
         for name in names:
@@ -2333,21 +2689,53 @@ class Mishmasher(QMainWindow):
             "mutation_candidates": {"genres": [], "instruments": [], "moods": []},
         }
 
+        weights = weights or {}
         for name in clean_names:
             assoc = self.get_association(name) or {}
-            for category in ["genres", "instruments", "playing", "moods", "eras", "vocals", "production", "avoid"]:
-                self.unique_extend(merged[category], list(assoc.get(category, [])))
+            # Weight is converted to repeated entries in the merged association.
+            # 0 still leaves one pass so a selected style never disappears entirely.
+            repeats = max(1, int(round(max(0, min(100, int(weights.get(name, 50)))) / 25)))
+            for _ in range(repeats):
+                for category in ["genres", "instruments", "playing", "moods", "eras", "vocals", "production", "avoid"]:
+                    self.unique_extend(merged[category], list(assoc.get(category, [])))
 
-            exclude = assoc.get("exclude", {}) if isinstance(assoc.get("exclude", {}), dict) else {}
-            self.unique_extend(merged["exclude"]["genres"], list(exclude.get("genres", [])))
-            self.unique_extend(merged["exclude"]["instruments"], list(exclude.get("instruments", [])))
+                exclude = assoc.get("exclude", {}) if isinstance(assoc.get("exclude", {}), dict) else {}
+                self.unique_extend(merged["exclude"]["genres"], list(exclude.get("genres", [])))
+                self.unique_extend(merged["exclude"]["instruments"], list(exclude.get("instruments", [])))
 
-            mutation = assoc.get("mutation_candidates", {}) if isinstance(assoc.get("mutation_candidates", {}), dict) else {}
-            self.unique_extend(merged["mutation_candidates"]["genres"], list(mutation.get("genres", [])))
-            self.unique_extend(merged["mutation_candidates"]["instruments"], list(mutation.get("instruments", [])))
-            self.unique_extend(merged["mutation_candidates"]["moods"], list(mutation.get("moods", [])))
+                mutation = assoc.get("mutation_candidates", {}) if isinstance(assoc.get("mutation_candidates", {}), dict) else {}
+                self.unique_extend(merged["mutation_candidates"]["genres"], list(mutation.get("genres", [])))
+                self.unique_extend(merged["mutation_candidates"]["instruments"], list(mutation.get("instruments", [])))
+                self.unique_extend(merged["mutation_candidates"]["moods"], list(mutation.get("moods", [])))
 
         return merged
+
+    def source_filtered_base_items(self, category: str, settings: GeneratorSettings) -> List[str]:
+        """Return the allowed broad pool for a category.
+
+        When the source filter is disabled, the whole database is available.
+        When the source filter is enabled, the generator is strict: it only uses
+        items found in the selected source associations. It no longer falls back
+        to the full database, because that is where unwanted genre/style bleed
+        can come from.
+        """
+        if not settings.source_filter_enabled or not settings.source_styles:
+            return list(self.db.get(category, []))
+
+        merged = self.merge_associations(settings.source_styles, {name: 100 for name in settings.source_styles})
+        if not merged:
+            return []
+
+        items: List[str] = []
+        self.unique_extend(items, list(merged.get(category, [])))
+
+        # Mutation candidates are only eligible when weirdness is above zero.
+        if settings.weirdness > 0:
+            mutation = merged.get("mutation_candidates", {}) if isinstance(merged.get("mutation_candidates", {}), dict) else {}
+            if category in ["genres", "instruments", "moods"]:
+                self.unique_extend(items, list(mutation.get(category, [])))
+
+        return items
 
     def valid_items(self, category: str, items: List[str]) -> List[str]:
         valid = set(self.db.get(category, []))
@@ -2360,6 +2748,91 @@ class Mishmasher(QMainWindow):
         if not isinstance(exclude, dict):
             return set()
         return set(exclude.get(category, []))
+
+
+
+    def build_weighted_blend_association(self, settings: GeneratorSettings) -> dict | None:
+        """Merge selected blend styles, repeating items based on slider weight."""
+        selected = self.get_selected_blend_styles_with_weights()
+
+        if settings.base_style != "None" and settings.base_style not in selected:
+            selected = {settings.base_style: 100, **selected}
+
+        if not selected:
+            return self.get_association(settings.base_style)
+
+        merged = {
+            "genres": [],
+            "instruments": [],
+            "playing": [],
+            "moods": [],
+            "eras": [],
+            "vocals": [],
+            "production": [],
+            "avoid": [],
+            "exclude": {"genres": [], "instruments": []},
+            "mutation_candidates": {"genres": [], "instruments": [], "moods": []},
+        }
+
+        def extend_weighted(target: List[str], items: List[str], weight: int) -> None:
+            repeats = max(1, round(weight / 25))
+            for _ in range(repeats):
+                target.extend(items)
+
+        for name, weight in selected.items():
+            assoc = self.get_association(name)
+            if not assoc:
+                continue
+
+            for key in ["genres", "instruments", "playing", "moods", "eras", "vocals", "production", "avoid"]:
+                extend_weighted(merged[key], list(assoc.get(key, [])), weight)
+
+            exclude = assoc.get("exclude", {})
+            if isinstance(exclude, dict):
+                merged["exclude"]["genres"].extend(list(exclude.get("genres", [])))
+                merged["exclude"]["instruments"].extend(list(exclude.get("instruments", [])))
+
+            mutation = assoc.get("mutation_candidates", {})
+            if isinstance(mutation, dict):
+                for key in ["genres", "instruments", "moods"]:
+                    extend_weighted(merged["mutation_candidates"][key], list(mutation.get(key, [])), weight)
+
+        return merged
+
+    def get_effective_base_pool(self, category: str) -> List[str]:
+        """Return the normal database pool or a restricted pool from selected source styles."""
+        if not hasattr(self, "source_filter_enabled_check") or not self.source_filter_enabled_check.isChecked():
+            return list(self.db.get(category, []))
+
+        selected = self.get_selected_source_styles()
+        if not selected:
+            return list(self.db.get(category, []))
+
+        settings = self.collect_settings()
+        values: List[str] = []
+        seen = set()
+
+        def add_many(items: List[str]) -> None:
+            for item in items:
+                key = str(item).casefold()
+                if key not in seen:
+                    seen.add(key)
+                    values.append(item)
+
+        for name in selected:
+            assoc = self.get_association(name)
+            if not assoc:
+                continue
+
+            add_many(list(assoc.get(category, [])))
+
+            if settings.weirdness > 0:
+                mutation = assoc.get("mutation_candidates", {})
+                if isinstance(mutation, dict):
+                    add_many(list(mutation.get(category, [])))
+
+        # Strict source filtering: do not fall back to the full DB.
+        return values
 
     def pick_associated(
         self,
@@ -2374,12 +2847,22 @@ class Mishmasher(QMainWindow):
         if count <= 0:
             return []
 
-        base = list(self.db.get(category, []))
+        base = self.source_filtered_base_items(category, settings)
         assoc_items = self.valid_items(category, list((assoc or {}).get(category, [])))
+
         mutation_block = (assoc or {}).get("mutation_candidates", {}) if assoc else {}
         mutation_items = []
-        if isinstance(mutation_block, dict):
+        if isinstance(mutation_block, dict) and settings.weirdness > 0:
             mutation_items = self.valid_items(category, list(mutation_block.get(category, [])))
+
+        # If a source filter is active, apply it to association items as well,
+        # not just to the broad fallback pool. This prevents selected-source mode
+        # from leaking unrelated terms via the active base/blend association.
+        if settings.source_filter_enabled and settings.source_styles:
+            allowed_pool = set(self.source_filtered_base_items(category, settings))
+            assoc_items = [item for item in assoc_items if item in allowed_pool]
+            mutation_items = [item for item in mutation_items if item in allowed_pool]
+
         bundle_items = self.valid_items(category, list((bundle_data or {}).get(category, [])))
 
         cohesion = max(0, min(100, settings.cohesion)) / 100.0
@@ -2393,9 +2876,11 @@ class Mishmasher(QMainWindow):
         if mutation_items:
             pool.extend(mutation_items * max(1, int(weirdness * 8)))
 
-        # This keeps the original broad database available, but heavily reduced when cohesion is high.
-        broad_repeats = max(1, int((1.0 - cohesion) * 6 + weirdness * 4))
-        pool.extend(base * broad_repeats)
+        # This keeps the broad pool available when cohesion/weirdness allow it.
+        # At 100% cohesion and 0% weirdness this becomes zero, preventing style bleed.
+        broad_repeats = int((1.0 - cohesion) * 6 + weirdness * 4)
+        if broad_repeats > 0:
+            pool.extend(base * broad_repeats)
 
         if not settings.allow_excluded:
             excluded = self.exclusion_set(assoc, category)
@@ -2404,6 +2889,11 @@ class Mishmasher(QMainWindow):
 
         if not pool:
             pool = base
+
+        # In strict source-filter mode, an empty category should remain empty
+        # rather than falling back to unrelated global database items.
+        if settings.source_filter_enabled and settings.source_styles and not pool:
+            return []
 
         chosen: List[str] = []
         if category == "genres" and settings.lock_base_genre and assoc_items:
@@ -2417,11 +2907,11 @@ class Mishmasher(QMainWindow):
                 chosen.append(candidate)
         return chosen
 
-    def pick(self, rng: random.Random, category: str, count: int, bundle_data: dict | None, bundle_weight: float) -> List[str]:
+    def pick(self, rng: random.Random, category: str, count: int, bundle_data: dict | None, bundle_weight: float, settings: GeneratorSettings | None = None) -> List[str]:
         if count <= 0:
             return []
 
-        base = list(self.db.get(category, []))
+        base = self.source_filtered_base_items(category, settings or self.collect_settings())
         bundle_items = list((bundle_data or {}).get(category, []))
         pool: List[str] = []
 
@@ -2559,7 +3049,7 @@ class Mishmasher(QMainWindow):
 
         # If blend support exists and is active, include exclusions from blended associations too.
         try:
-            if hasattr(self, "blend_styles_list") and hasattr(self, "blend_enabled_check") and self.blend_enabled_check.isChecked():
+            if hasattr(self, "blend_styles_list") and hasattr(self, "blend_check") and self.blend_check.isChecked():
                 for item in self.blend_styles_list.selectedItems():
                     blend_assoc = self.get_association(item.text())
                     if blend_assoc:
@@ -2639,10 +3129,24 @@ class Mishmasher(QMainWindow):
         # Never add avoid/negative instructions to the main Suno prompt.
         return self.trim_prompt("; ".join(part for part in prompt_parts if part), settings.max_chars)
 
+
+    def get_selected_blend_styles_with_weights(self) -> Dict[str, int]:
+        if not hasattr(self, "blend_style_checks") or not hasattr(self, "blend_style_weights"):
+            return {}
+
+        selected: Dict[str, int] = {}
+        for name, check in self.blend_style_checks.items():
+            if check.isChecked():
+                weight = self.blend_style_weights.get(name)
+                value = weight.value() if weight is not None else 50
+                if value > 0:
+                    selected[name] = value
+        return selected
+
     def active_style_label_from_settings(self, settings: GeneratorSettings) -> str:
         try:
-            if hasattr(self, "blend_enabled_check") and self.blend_enabled_check.isChecked():
-                selected = [item.text() for item in self.blend_styles_list.selectedItems()]
+            if hasattr(self, "blend_check") and self.blend_check.isChecked():
+                selected = list(self.get_selected_blend_styles_with_weights().keys())
                 if settings.base_style != "None" and settings.base_style not in selected:
                     selected.insert(0, settings.base_style)
                 if selected:
@@ -2665,9 +3169,10 @@ class Mishmasher(QMainWindow):
             f"Base prompt: {settings.base_prompt or '(none)'}\n"
             f"Negative prompt: {settings.negative_prompt or '(none)'}\n"
             f"Base style: {active_style_label}\n"
+            f"Source filter: {'on: ' + ', '.join(settings.source_styles) if settings.source_filter_enabled and settings.source_styles else 'off'}\n"
             f"Association engine: {'on' if settings.use_associations and active_style_label != 'None' and settings.mode != 'Chaos' else 'off'}\n"
-            f"Cohesion: {settings.cohesion}% | Mutation: {settings.weirdness}% | Allow excluded: {settings.allow_excluded}\n\n"
-            f"Genres: {', '.join(picked.get('genres', []))}\n"
+            f"Cohesion: {settings.cohesion}% | Mutation: {settings.weirdness}% | Allow excluded: {settings.allow_excluded}\n"
+            f"Strict source filtering: {'yes' if settings.source_filter_enabled and settings.source_styles else 'no'}\n\n"            f"Genres: {', '.join(picked.get('genres', []))}\n"
             f"Instruments: {', '.join(picked.get('instruments', []))}\n"
             f"Playing: {', '.join(picked.get('playing', []))}\n"
             f"Moods: {', '.join(picked.get('moods', []))}\n"
@@ -2776,8 +3281,13 @@ class Mishmasher(QMainWindow):
             if effective_base_style != "None":
                 blend_names.insert(0, effective_base_style)
 
-        if settings.blend_enabled and blend_names:
-            assoc_data = self.merge_associations(blend_names)
+        if settings.source_filter_enabled and settings.source_styles and not settings.blend_enabled:
+            # In source-filter mode, the selected source styles become the active
+            # association pool. This makes "only use these styles" behave literally.
+            assoc_data = self.merge_associations(settings.source_styles, {name: 100 for name in settings.source_styles})
+            active_style_label = "Source filter: " + " + ".join(settings.source_styles)
+        elif settings.blend_enabled and blend_names:
+            assoc_data = self.merge_associations(blend_names, settings.blend_weights)
             active_style_label = " + ".join(dict.fromkeys([name for name in blend_names if name and name != "None"]))
         else:
             assoc_data = self.get_association(effective_base_style)
@@ -2848,14 +3358,14 @@ class Mishmasher(QMainWindow):
             }
         else:
             picked = {
-                "genres": self.pick(rng, "genres", counts["genres"], bundle_data, bundle_weight),
-                "instruments": self.pick(rng, "instruments", counts["instruments"], bundle_data, bundle_weight),
-                "playing": self.pick(rng, "playing", counts["playing"], bundle_data, bundle_weight),
-                "moods": self.pick(rng, "moods", counts["moods"], bundle_data, bundle_weight),
-                "eras": self.pick(rng, "eras", counts["eras"], bundle_data, bundle_weight),
-                "vocals": self.pick(rng, "vocals", counts["vocals"], bundle_data, bundle_weight),
-                "production": self.pick(rng, "production", counts["production"], bundle_data, bundle_weight),
-                "avoid": self.pick(rng, "avoid", counts["avoid"], bundle_data, bundle_weight),
+                "genres": self.pick(rng, "genres", counts["genres"], bundle_data, bundle_weight, settings),
+                "instruments": self.pick(rng, "instruments", counts["instruments"], bundle_data, bundle_weight, settings),
+                "playing": self.pick(rng, "playing", counts["playing"], bundle_data, bundle_weight, settings),
+                "moods": self.pick(rng, "moods", counts["moods"], bundle_data, bundle_weight, settings),
+                "eras": self.pick(rng, "eras", counts["eras"], bundle_data, bundle_weight, settings),
+                "vocals": self.pick(rng, "vocals", counts["vocals"], bundle_data, bundle_weight, settings),
+                "production": self.pick(rng, "production", counts["production"], bundle_data, bundle_weight, settings),
+                "avoid": self.pick(rng, "avoid", counts["avoid"], bundle_data, bundle_weight, settings),
             }
 
         if mode == "Chaos":
@@ -2916,6 +3426,42 @@ class Mishmasher(QMainWindow):
         limit = self.max_chars_spin.value() if hasattr(self, "max_chars_spin") else MAX_PROMPT_CHARS
         self.char_label.setText(f"{count} / {limit}")
         self.char_label.setStyleSheet("color: #a33;" if count > limit else "")
+
+    def reset_prompt_workspace(self) -> None:
+        """Clear prompt-related UI without touching the database."""
+        for widget_name in ["base_prompt_edit", "negative_prompt_edit", "output", "negative_output", "breakdown"]:
+            widget = getattr(self, widget_name, None)
+            if widget is not None and hasattr(widget, "clear"):
+                widget.blockSignals(True)
+                widget.clear()
+                widget.blockSignals(False)
+
+        self.prompt_history.clear()
+        self.refresh_history_list()
+        self._last_generated_picked = None
+        self._last_generation_settings = None
+        self._last_generation_removed_by_negative = []
+        self.update_count()
+        self.statusBar().showMessage("Cleared prompts, negative prompt, breakdown and history", 3000)
+
+
+    def clear_prompt_workspace(self) -> None:
+        if hasattr(self, "base_prompt_edit"):
+            self.base_prompt_edit.clear()
+        if hasattr(self, "negative_prompt_edit"):
+            self.negative_prompt_edit.clear()
+        if hasattr(self, "output"):
+            self.output.clear()
+        if hasattr(self, "negative_output"):
+            self.negative_output.clear()
+        if hasattr(self, "breakdown"):
+            self.breakdown.clear()
+        if hasattr(self, "history_list"):
+            self.clear_prompt_history()
+        self._last_generated_picked = None
+        self._last_generation_settings = None
+        self.update_count()
+        self.statusBar().showMessage("Prompt workspace cleared", 2500)
 
     def copy_prompt(self) -> None:
         QGuiApplication.clipboard().setText(self.output.toPlainText())
