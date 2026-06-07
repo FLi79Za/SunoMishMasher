@@ -19,20 +19,22 @@ import json
 import random
 import re
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Dict, List, Set
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QStringListModel
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
+    QCompleter,
     QComboBox,
     QFileDialog,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QLineEdit,
     QListWidget,
@@ -56,8 +58,41 @@ from PySide6.QtWidgets import (
 APP_DIR = Path.home() / ".suno_style_mishmasher"
 DB_PATH = APP_DIR / "style_database.json"
 PRESET_PATH = APP_DIR / "last_settings.json"
+FAVOURITES_PATH = APP_DIR / "saved_prompts.json"
 MAX_PROMPT_CHARS = 1000
 PROMPT_HISTORY_LIMIT = 10
+
+PRIMARY_BUTTON_STYLE = """
+QPushButton {
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 6px;
+    background-color: #6d3fd1;
+    color: white;
+}
+QPushButton:hover {
+    background-color: #7d4ee5;
+}
+QPushButton:pressed {
+    background-color: #5832ad;
+}
+"""
+
+SECONDARY_ACTION_BUTTON_STYLE = """
+QPushButton {
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #365f91;
+    color: white;
+}
+QPushButton:hover {
+    background-color: #4070a8;
+}
+QPushButton:pressed {
+    background-color: #2b4b72;
+}
+"""
 
 
 DEFAULT_DB = {
@@ -821,22 +856,33 @@ class Mishmasher(QMainWindow):
         self.db = self.load_db()
         self.settings = GeneratorSettings()
         self.prompt_history: List[dict] = []
+        self.saved_prompts: List[dict] = self.load_saved_prompts()
         self._last_generated_picked: Dict[str, List[str]] | None = None
         self._last_generation_settings: GeneratorSettings | None = None
         self._last_generation_removed_by_negative: List[str] = []
         self._suspend_negative_regen = False
+        self._loading_settings = True
 
         tabs = QTabWidget()
         tabs.addTab(self.build_generator_tab(), "Generator")
         tabs.addTab(self.build_database_tab(), "Database")
         tabs.addTab(self.build_bulk_import_tab(), "Bulk Import")
         tabs.addTab(self.build_import_packs_tab(), "Import Packs")
+        tabs.addTab(self.build_favourites_tab(), "Favourites")
         tabs.addTab(self.build_associations_tab(), "Associations")
         tabs.addTab(self.build_help_tab(), "Help")
         self.setCentralWidget(tabs)
 
         self.refresh_bundle_combo()
         self.refresh_style_combo()
+
+        # Apply saved generation preferences after all generator widgets,
+        # blend controls, and source-filter lists have been created/refreshed.
+        # Earlier versions had persistence functions but never applied them here,
+        # which meant the app always opened with default UI values.
+        saved_settings = self.load_saved_settings()
+        self.apply_settings_to_ui(saved_settings)
+
         self.generate_prompt()
 
     def load_db(self) -> dict:
@@ -957,9 +1003,25 @@ class Mishmasher(QMainWindow):
         action_layout = QHBoxLayout(action_group)
         gen_btn = QPushButton("Generate")
         gen_btn.clicked.connect(self.generate_prompt)
+        gen_btn.setStyleSheet(PRIMARY_BUTTON_STYLE)
+
+        variants_btn = QPushButton("Generate variants")
+        variants_btn.clicked.connect(self.generate_prompt_variants)
+        variants_btn.setStyleSheet(SECONDARY_ACTION_BUTTON_STYLE)
+
         save_btn = QPushButton("Save prompt")
         save_btn.clicked.connect(self.save_prompt_to_file)
+        save_btn.setStyleSheet(SECONDARY_ACTION_BUTTON_STYLE)
+
+        self.variant_count_spin = QSpinBox()
+        self.variant_count_spin.setRange(3, 5)
+        self.variant_count_spin.setValue(3)
+        self.variant_count_spin.setPrefix("Variants: ")
+        self.variant_count_spin.setMaximumWidth(120)
+
         action_layout.addWidget(gen_btn)
+        action_layout.addWidget(variants_btn)
+        action_layout.addWidget(self.variant_count_spin)
         action_layout.addWidget(save_btn)
         action_layout.addStretch(1)
         controls_layout.addWidget(action_group)
@@ -978,9 +1040,22 @@ class Mishmasher(QMainWindow):
         self.use_assoc_check.stateChanged.connect(self.generate_prompt)
         form.addRow("Associations", self.use_assoc_check)
 
+        base_style_widget = QWidget()
+        base_style_layout = QVBoxLayout(base_style_widget)
+        base_style_layout.setContentsMargins(0, 0, 0, 0)
+        base_style_layout.setSpacing(4)
+
+        self.base_style_search = QLineEdit()
+        self.base_style_search.setPlaceholderText("Smart search base styles...")
+        self.base_style_search.textChanged.connect(self.filter_base_style_combo)
+        base_style_layout.addWidget(self.base_style_search)
+
         self.base_style_combo = QComboBox()
+        self.base_style_combo.setEditable(False)
         self.base_style_combo.currentTextChanged.connect(self.generate_prompt)
-        form.addRow("Base style", self.base_style_combo)
+        base_style_layout.addWidget(self.base_style_combo)
+
+        form.addRow("Base style", base_style_widget)
 
         self.auto_match_check = QCheckBox("Auto-match base style from text")
         self.auto_match_check.setChecked(True)
@@ -1027,6 +1102,10 @@ class Mishmasher(QMainWindow):
         self.max_chars_spin.valueChanged.connect(self.generate_prompt)
         form.addRow("Max chars", self.max_chars_spin)
 
+        reset_settings_btn = QPushButton("Reset generation settings to defaults")
+        reset_settings_btn.clicked.connect(self.reset_generation_settings_to_defaults)
+        form.addRow("Defaults", reset_settings_btn)
+
         controls_layout.addWidget(options)
 
         blend_group = QGroupBox("Blend styles")
@@ -1040,6 +1119,11 @@ class Mishmasher(QMainWindow):
         blend_hint = QLabel("Select styles and optionally adjust their weights. Weight 0 disables that style for the blend.")
         blend_hint.setWordWrap(True)
         blend_layout.addWidget(blend_hint)
+
+        self.blend_style_search = QLineEdit()
+        self.blend_style_search.setPlaceholderText("Smart search blend styles...")
+        self.blend_style_search.textChanged.connect(self.filter_blend_style_controls)
+        blend_layout.addWidget(self.blend_style_search)
 
         self.blend_scroll = QScrollArea()
         self.blend_scroll.setWidgetResizable(True)
@@ -1064,6 +1148,11 @@ class Mishmasher(QMainWindow):
         source_hint = QLabel("When enabled, broad random picks are limited to the selected source styles instead of the full database.")
         source_hint.setWordWrap(True)
         source_layout.addWidget(source_hint)
+
+        self.source_style_search = QLineEdit()
+        self.source_style_search.setPlaceholderText("Smart search source styles...")
+        self.source_style_search.textChanged.connect(self.filter_source_styles_list)
+        source_layout.addWidget(self.source_style_search)
 
         self.source_styles_list = QListWidget()
         self.source_styles_list.setSelectionMode(QListWidget.MultiSelection)
@@ -1136,9 +1225,13 @@ class Mishmasher(QMainWindow):
         main_button_row = QHBoxLayout()
         copy_main_btn = QPushButton("Copy main prompt")
         copy_main_btn.clicked.connect(self.copy_prompt)
+        save_favourite_btn = QPushButton("Save favourite")
+        save_favourite_btn.clicked.connect(self.save_current_prompt_as_favourite)
+        save_favourite_btn.setStyleSheet(SECONDARY_ACTION_BUTTON_STYLE)
         clear_main_btn = QPushButton("Clear main prompt")
         clear_main_btn.clicked.connect(self.output.clear)
         main_button_row.addWidget(copy_main_btn)
+        main_button_row.addWidget(save_favourite_btn)
         main_button_row.addWidget(clear_main_btn)
         main_button_row.addStretch(1)
         main_output_layout.addLayout(main_button_row)
@@ -1165,6 +1258,26 @@ class Mishmasher(QMainWindow):
         negative_output_layout.addLayout(negative_button_row)
 
         output_layout.addWidget(negative_output_group)
+
+        variants_group = QGroupBox("Prompt variants")
+        variants_layout = QVBoxLayout(variants_group)
+
+        self.variants_output = QPlainTextEdit()
+        self.variants_output.setPlaceholderText("Generated variants appear here as clean copyable blocks.")
+        self.variants_output.setMinimumHeight(150)
+        variants_layout.addWidget(self.variants_output)
+
+        variants_button_row = QHBoxLayout()
+        copy_variants_btn = QPushButton("Copy variants")
+        copy_variants_btn.clicked.connect(self.copy_variants)
+        clear_variants_btn = QPushButton("Clear variants")
+        clear_variants_btn.clicked.connect(self.variants_output.clear)
+        variants_button_row.addWidget(copy_variants_btn)
+        variants_button_row.addWidget(clear_variants_btn)
+        variants_button_row.addStretch(1)
+        variants_layout.addLayout(variants_button_row)
+
+        output_layout.addWidget(variants_group)
 
         history_group = QGroupBox("Prompt history")
         history_layout = QVBoxLayout(history_group)
@@ -1213,6 +1326,123 @@ class Mishmasher(QMainWindow):
         return page
 
 
+
+    def style_match_score(self, name: str, query: str) -> int:
+        """Simple smart-ish search scoring for style names."""
+        if not query.strip():
+            return 1
+
+        haystack = name.casefold()
+        query_text = query.casefold().strip()
+        tokens = [token for token in re.split(r"\s+", query_text) if token]
+
+        if not tokens:
+            return 1
+        if haystack == query_text:
+            return 1000
+        if haystack.startswith(query_text):
+            return 800
+        if query_text in haystack:
+            return 600
+
+        compact_haystack = re.sub(r"[^a-z0-9]+", "", haystack)
+        score = 0
+        for token in tokens:
+            if token in haystack:
+                score += 100
+            compact_token = re.sub(r"[^a-z0-9]+", "", token)
+            if compact_token and compact_token in compact_haystack:
+                score += 40
+        return score
+
+    def filtered_style_names(self, query: str) -> List[str]:
+        names = sorted(self.db.get("associations", {}).keys())
+        if not query.strip():
+            return names
+
+        scored = []
+        for name in names:
+            score = self.style_match_score(name, query)
+            if score > 0:
+                scored.append((score, name))
+
+        scored.sort(key=lambda item: (-item[0], item[1].casefold()))
+        return [name for _, name in scored]
+
+    def setup_base_style_completer(self) -> None:
+        if not hasattr(self, "base_style_search"):
+            return
+
+        names = sorted(self.db.get("associations", {}).keys())
+        self.base_style_completer_model = QStringListModel(names)
+        self.base_style_completer = QCompleter(self.base_style_completer_model, self)
+        self.base_style_completer.setCaseSensitivity(Qt.CaseInsensitive)
+        self.base_style_completer.setFilterMode(Qt.MatchContains)
+        self.base_style_search.setCompleter(self.base_style_completer)
+        try:
+            self.base_style_completer.activated.disconnect()
+        except Exception:
+            pass
+        self.base_style_completer.activated.connect(self.select_base_style_from_search)
+
+    def select_base_style_from_search(self, text: str) -> None:
+        if not hasattr(self, "base_style_combo"):
+            return
+        index = self.base_style_combo.findText(text)
+        if index >= 0:
+            self.base_style_combo.setCurrentIndex(index)
+            self.base_style_search.blockSignals(True)
+            self.base_style_search.setText(text)
+            self.base_style_search.blockSignals(False)
+            self.generate_prompt()
+
+    def filter_base_style_combo(self, query: str) -> None:
+        if not hasattr(self, "base_style_combo"):
+            return
+
+        current = self.base_style_combo.currentText()
+        names = ["None"] + self.filtered_style_names(query)
+
+        self.base_style_combo.blockSignals(True)
+        self.base_style_combo.clear()
+        self.base_style_combo.addItems(names)
+
+        exact_matches = [name for name in names if name.casefold() == query.casefold().strip()]
+        target = exact_matches[0] if exact_matches else current
+        index = self.base_style_combo.findText(target)
+        if index >= 0:
+            self.base_style_combo.setCurrentIndex(index)
+        else:
+            self.base_style_combo.setCurrentIndex(0)
+
+        self.base_style_combo.blockSignals(False)
+
+        if exact_matches:
+            self.generate_prompt()
+
+    def filter_blend_style_controls(self, query: str) -> None:
+        if not hasattr(self, "blend_style_row_widgets"):
+            return
+
+        visible_names = set(self.filtered_style_names(query))
+        show_all = not query.strip()
+
+        for name, widget in self.blend_style_row_widgets.items():
+            check = self.blend_style_checks.get(name)
+            checked = check.isChecked() if check is not None else False
+            widget.setVisible(show_all or name in visible_names or checked)
+
+    def filter_source_styles_list(self, query: str) -> None:
+        if not hasattr(self, "source_styles_list"):
+            return
+
+        visible_names = set(self.filtered_style_names(query))
+        show_all = not query.strip()
+
+        for index in range(self.source_styles_list.count()):
+            item = self.source_styles_list.item(index)
+            item.setHidden(not (show_all or item.text() in visible_names or item.isSelected()))
+
     def rebuild_blend_style_controls(self) -> None:
         if not hasattr(self, "blend_styles_layout"):
             return
@@ -1225,6 +1455,7 @@ class Mishmasher(QMainWindow):
 
         self.blend_style_checks = {}
         self.blend_style_weights = {}
+        self.blend_style_row_widgets = {}
 
         for name in sorted(self.db.get("associations", {}).keys()):
             row_widget = QWidget()
@@ -1247,8 +1478,12 @@ class Mishmasher(QMainWindow):
             self.blend_styles_layout.addWidget(row_widget)
             self.blend_style_checks[name] = check
             self.blend_style_weights[name] = weight
+            self.blend_style_row_widgets[name] = row_widget
 
         self.blend_styles_layout.addStretch(1)
+
+        if hasattr(self, "blend_style_search"):
+            self.filter_blend_style_controls(self.blend_style_search.text())
 
     def refresh_source_styles_list(self) -> None:
         if not hasattr(self, "source_styles_list"):
@@ -1265,6 +1500,9 @@ class Mishmasher(QMainWindow):
                 item.setSelected(True)
 
         self.source_styles_list.blockSignals(False)
+
+        if hasattr(self, "source_style_search"):
+            self.filter_source_styles_list(self.source_style_search.text())
 
     def get_selected_source_styles(self) -> List[str]:
         if not hasattr(self, "source_styles_list"):
@@ -1730,6 +1968,304 @@ class Mishmasher(QMainWindow):
             self.pack_status.setPlainText(summary)
         QMessageBox.information(self, "Import complete", summary)
 
+
+    def build_favourites_tab(self) -> QWidget:
+        page = QWidget()
+        root = QHBoxLayout(page)
+
+        left = QVBoxLayout()
+        root.addLayout(left, 1)
+
+        left.addWidget(QLabel("Saved favourite prompts"))
+        self.favourites_list = QListWidget()
+        self.favourites_list.itemDoubleClicked.connect(self.restore_favourite_item)
+        self.favourites_list.currentItemChanged.connect(self.on_favourite_selection_changed)
+        left.addWidget(self.favourites_list, 1)
+
+        fav_buttons = QHBoxLayout()
+        restore_btn = QPushButton("Restore")
+        restore_btn.clicked.connect(self.restore_selected_favourite)
+        copy_main_btn = QPushButton("Copy main")
+        copy_main_btn.clicked.connect(self.copy_selected_favourite_main)
+        copy_neg_btn = QPushButton("Copy negative")
+        copy_neg_btn.clicked.connect(self.copy_selected_favourite_negative)
+        delete_btn = QPushButton("Delete")
+        delete_btn.clicked.connect(self.delete_selected_favourite)
+        fav_buttons.addWidget(restore_btn)
+        fav_buttons.addWidget(copy_main_btn)
+        fav_buttons.addWidget(copy_neg_btn)
+        fav_buttons.addWidget(delete_btn)
+        left.addLayout(fav_buttons)
+
+        import_export_buttons = QHBoxLayout()
+        export_btn = QPushButton("Export favourites JSON")
+        export_btn.clicked.connect(self.export_favourites)
+        import_btn = QPushButton("Import favourites JSON")
+        import_btn.clicked.connect(self.import_favourites)
+        import_export_buttons.addWidget(export_btn)
+        import_export_buttons.addWidget(import_btn)
+        import_export_buttons.addStretch(1)
+        left.addLayout(import_export_buttons)
+
+        right = QVBoxLayout()
+        root.addLayout(right, 2)
+
+        self.favourite_detail = QPlainTextEdit()
+        self.favourite_detail.setReadOnly(True)
+        self.favourite_detail.setPlaceholderText("Select a favourite to preview it.")
+        right.addWidget(self.favourite_detail, 1)
+
+        help_text = QLabel(
+            "Favourites are long-term saved prompts. They persist between sessions and are separate from "
+            "the temporary 10-item prompt history. Save good Suno prompts here when you want to reuse them later."
+        )
+        help_text.setWordWrap(True)
+        right.addWidget(help_text)
+
+        self.refresh_favourites_list()
+        return page
+
+    def load_saved_prompts(self) -> List[dict]:
+        if not FAVOURITES_PATH.exists():
+            return []
+        try:
+            data = json.loads(FAVOURITES_PATH.read_text(encoding="utf-8"))
+            if not isinstance(data, list):
+                return []
+            cleaned: List[dict] = []
+            for entry in data:
+                if not isinstance(entry, dict):
+                    continue
+                main = str(entry.get("main", "")).strip()
+                if not main:
+                    continue
+                cleaned.append({
+                    "title": str(entry.get("title", "Untitled prompt")).strip() or "Untitled prompt",
+                    "main": main,
+                    "negative": str(entry.get("negative", "")).strip(),
+                    "notes": str(entry.get("notes", "")).strip(),
+                    "created": str(entry.get("created", "")).strip(),
+                    "mode": str(entry.get("mode", "")).strip(),
+                    "base_style": str(entry.get("base_style", "")).strip(),
+                })
+            return cleaned
+        except Exception:
+            return []
+
+    def save_saved_prompts(self) -> None:
+        APP_DIR.mkdir(parents=True, exist_ok=True)
+        FAVOURITES_PATH.write_text(json.dumps(self.saved_prompts, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    def make_favourite_title_suggestion(self) -> str:
+        base = ""
+        if hasattr(self, "base_prompt_edit"):
+            base = self.base_prompt_edit.toPlainText().strip()
+        if not base and hasattr(self, "base_style_combo"):
+            base = self.base_style_combo.currentText()
+        if not base or base == "None":
+            base = "Suno prompt"
+        return base[:70].strip()
+
+    def save_current_prompt_as_favourite(self) -> None:
+        if not hasattr(self, "output"):
+            return
+
+        main_prompt = self.output.toPlainText().strip()
+        if not main_prompt:
+            QMessageBox.information(self, "No prompt to save", "Generate or type a main prompt first.")
+            return
+
+        default_title = self.make_favourite_title_suggestion()
+        title, ok = QInputDialog.getText(self, "Save favourite prompt", "Favourite name:", text=default_title)
+        if not ok:
+            return
+
+        title = title.strip() or default_title or "Untitled prompt"
+        negative_prompt = self.negative_output.toPlainText().strip() if hasattr(self, "negative_output") else ""
+
+        entry = {
+            "title": title,
+            "main": main_prompt,
+            "negative": negative_prompt,
+            "notes": "",
+            "created": self.current_timestamp(),
+            "mode": self.mode_combo.currentText() if hasattr(self, "mode_combo") else "",
+            "base_style": self.active_style_label_from_settings(self.collect_settings()) if hasattr(self, "mode_combo") else "",
+        }
+
+        # Avoid exact duplicate main+negative pairs. If the prompt already exists, update title/metadata.
+        for existing in self.saved_prompts:
+            if existing.get("main") == main_prompt and existing.get("negative", "") == negative_prompt:
+                existing.update(entry)
+                self.save_saved_prompts()
+                self.refresh_favourites_list()
+                self.statusBar().showMessage("Updated existing favourite prompt", 2500)
+                return
+
+        self.saved_prompts.insert(0, entry)
+        self.save_saved_prompts()
+        self.refresh_favourites_list()
+        self.statusBar().showMessage("Favourite prompt saved", 2500)
+
+    def current_timestamp(self) -> str:
+        from datetime import datetime
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def refresh_favourites_list(self) -> None:
+        if not hasattr(self, "favourites_list"):
+            return
+
+        self.favourites_list.blockSignals(True)
+        self.favourites_list.clear()
+
+        for index, entry in enumerate(self.saved_prompts, start=1):
+            title = entry.get("title", "Untitled prompt")
+            style = entry.get("base_style", "")
+            suffix = f" [{style}]" if style else ""
+            item = QListWidgetItem(f"{index}. {title}{suffix}")
+            item.setData(Qt.UserRole, entry)
+            self.favourites_list.addItem(item)
+
+        self.favourites_list.blockSignals(False)
+
+    def favourite_entry_to_preview(self, entry: dict) -> str:
+        return (
+            f"TITLE\n{entry.get('title', 'Untitled prompt')}\n\n"
+            f"CREATED\n{entry.get('created', '') or 'Unknown'}\n\n"
+            f"MODE / STYLE\n{entry.get('mode', '') or 'Unknown'} | {entry.get('base_style', '') or 'None'}\n\n"
+            f"MAIN PROMPT\n{entry.get('main', '')}\n\n"
+            f"NEGATIVE PROMPT\n{entry.get('negative', '') or '(none)'}\n\n"
+            f"NOTES\n{entry.get('notes', '') or '(none)'}"
+        )
+
+    def on_favourite_selection_changed(self, current: QListWidgetItem | None, previous: QListWidgetItem | None) -> None:
+        if current is None or not hasattr(self, "favourite_detail"):
+            return
+        entry = current.data(Qt.UserRole)
+        if isinstance(entry, dict):
+            self.favourite_detail.setPlainText(self.favourite_entry_to_preview(entry))
+
+    def selected_favourite_entry(self) -> dict | None:
+        if not hasattr(self, "favourites_list"):
+            return None
+        item = self.favourites_list.currentItem()
+        if item is None:
+            return None
+        entry = item.data(Qt.UserRole)
+        return entry if isinstance(entry, dict) else None
+
+    def restore_favourite_item(self, item: QListWidgetItem) -> None:
+        entry = item.data(Qt.UserRole)
+        if isinstance(entry, dict):
+            self.restore_favourite(entry)
+
+    def restore_selected_favourite(self) -> None:
+        entry = self.selected_favourite_entry()
+        if entry:
+            self.restore_favourite(entry)
+
+    def restore_favourite(self, entry: dict) -> None:
+        if hasattr(self, "output"):
+            self.output.blockSignals(True)
+            self.output.setPlainText(entry.get("main", ""))
+            self.output.blockSignals(False)
+        if hasattr(self, "negative_output"):
+            self.negative_output.blockSignals(True)
+            self.negative_output.setPlainText(entry.get("negative", ""))
+            self.negative_output.blockSignals(False)
+        if hasattr(self, "favourite_detail"):
+            self.favourite_detail.setPlainText(self.favourite_entry_to_preview(entry))
+        self.update_count()
+        self.statusBar().showMessage("Restored favourite prompt", 2500)
+
+    def copy_selected_favourite_main(self) -> None:
+        entry = self.selected_favourite_entry()
+        if not entry:
+            return
+        QGuiApplication.clipboard().setText(entry.get("main", ""))
+        if hasattr(self, "favourite_detail"):
+            self.favourite_detail.setPlainText(self.favourite_entry_to_preview(entry))
+        self.statusBar().showMessage("Copied favourite main prompt", 2500)
+
+    def copy_selected_favourite_negative(self) -> None:
+        entry = self.selected_favourite_entry()
+        if not entry:
+            return
+        QGuiApplication.clipboard().setText(entry.get("negative", ""))
+        if hasattr(self, "favourite_detail"):
+            self.favourite_detail.setPlainText(self.favourite_entry_to_preview(entry))
+        self.statusBar().showMessage("Copied favourite negative prompt", 2500)
+
+    def delete_selected_favourite(self) -> None:
+        if not hasattr(self, "favourites_list"):
+            return
+        row = self.favourites_list.currentRow()
+        if row < 0 or row >= len(self.saved_prompts):
+            return
+
+        title = self.saved_prompts[row].get("title", "Untitled prompt")
+        confirm = QMessageBox.question(self, "Delete favourite", f"Delete favourite prompt '{title}'?")
+        if confirm != QMessageBox.Yes:
+            return
+
+        self.saved_prompts.pop(row)
+        self.save_saved_prompts()
+        self.refresh_favourites_list()
+        if hasattr(self, "favourite_detail"):
+            self.favourite_detail.clear()
+        self.statusBar().showMessage("Favourite deleted", 2500)
+
+    def export_favourites(self) -> None:
+        path, _ = QFileDialog.getSaveFileName(self, "Export favourites", "suno_mishmasher_favourites.json", "JSON Files (*.json)")
+        if not path:
+            return
+        Path(path).write_text(json.dumps(self.saved_prompts, indent=2, ensure_ascii=False), encoding="utf-8")
+        self.statusBar().showMessage("Favourites exported", 2500)
+
+    def import_favourites(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(self, "Import favourites", "", "JSON Files (*.json);;All Files (*)")
+        if not path:
+            return
+
+        try:
+            parsed = json.loads(Path(path).read_text(encoding="utf-8-sig"))
+            if not isinstance(parsed, list):
+                raise ValueError("Favourites JSON must be a list.")
+
+            existing = {(item.get("main", ""), item.get("negative", "")) for item in self.saved_prompts}
+            added = 0
+
+            for entry in parsed:
+                if not isinstance(entry, dict):
+                    continue
+                main = str(entry.get("main", "")).strip()
+                if not main:
+                    continue
+                negative = str(entry.get("negative", "")).strip()
+                key = (main, negative)
+                if key in existing:
+                    continue
+
+                self.saved_prompts.append({
+                    "title": str(entry.get("title", "Imported favourite")).strip() or "Imported favourite",
+                    "main": main,
+                    "negative": negative,
+                    "notes": str(entry.get("notes", "")).strip(),
+                    "created": str(entry.get("created", "")).strip() or self.current_timestamp(),
+                    "mode": str(entry.get("mode", "")).strip(),
+                    "base_style": str(entry.get("base_style", "")).strip(),
+                })
+                existing.add(key)
+                added += 1
+
+            self.save_saved_prompts()
+            self.refresh_favourites_list()
+            self.statusBar().showMessage(f"Imported {added} favourite prompt(s)", 2500)
+
+        except Exception as exc:
+            QMessageBox.warning(self, "Import failed", str(exc))
+
+
     def build_associations_tab(self) -> QWidget:
         page = QWidget()
         root = QHBoxLayout(page)
@@ -2012,29 +2548,343 @@ class Mishmasher(QMainWindow):
     def build_help_tab(self) -> QWidget:
         page = QWidget()
         layout = QVBoxLayout(page)
+
         help_text = QTextEdit()
         help_text.setReadOnly(True)
+        help_text.setLineWrapMode(QTextEdit.WidgetWidth)
         help_text.setPlainText(
-            "Suno Style Mishmasher\n\n"
-            "Simple use: type a base prompt or genre at the top of the Generator tab, then click Generate. The app will append instruments, direction, mood, era, vocals, and production notes while keeping the output under the character limit. Use Blend base styles when you want to merge two or more association profiles, for example Industrial Metal Core + Dark Ambient / Dungeon Synth. "
-            "Use this to generate compact style prompts for Suno. The aim is not perfect genre accuracy, "
-            "but creative discovery.\n\n"
-            "Modes:\n"
-            "Balanced: Mostly sensible combinations.\n"
-            "Bundle-led: Starts from the selected bundle, then adds a few extra colours.\n"
-            "Random: Mixes freely from the whole database.\n"
-            "Chaos: Combines unrelated styles and instruments on purpose.\n"
-            "Minimal: Short, focused prompt.\n"
-            "Dense: More ingredients, still trimmed to the character limit.\n\n"
-            "Base styles are the main style anchors. They connect compatible genres, instruments, moods, "
-            "production notes, exclusions, and mutation candidates. Old style bundles are kept in the JSON for compatibility, "
-            "but normal generation now uses base styles.\n\n"
-            "Database file location:\n"
-            f"{DB_PATH}\n\n"
-            "Tip: Once Suno gives you something interesting, paste the best prompt back into your own notes "
-            "and gradually build bundles from the styles that work.\n\n"
-            "Bulk import: go to Database, pick a category, then paste one item per line or import a .txt, .csv, or .json file. Duplicate entries are skipped automatically.\n\nAssociations: use the Associations tab to link a base style to compatible genres, instruments, moods, production notes, exclusions, and mutation candidates. The Generator tab uses those links when Use style associations is enabled."
+            "SUNO STYLE MISHMASHER - DESKTOP MANUAL\n\n"
+            "Purpose\n"
+            "-------\n"
+            "Suno Style Mishmasher is a creative prompt-building tool for Suno. It helps you generate compact music style prompts by combining genres, instruments, moods, playing directions, vocal styles, eras, and production notes.\n\n"
+            "The goal is not strict music theory accuracy. The goal is fast creative exploration, controlled hybridisation, and discovering style combinations you may not have thought of manually.\n\n"
+            "The app can work in two broad ways:\n\n"
+            "1. Controlled generation, where it follows selected base styles and avoids unrelated material.\n"
+            "2. Chaotic generation, where it deliberately pulls from wider pools for strange, unexpected combinations.\n\n"
+            "Recommended Basic Workflow\n"
+            "--------------------------\n"
+            "1. Type a starting idea in Base prompt, for example:\n"
+            "   grunge rock with cinematic atmosphere\n"
+            "   industrial metal soundtrack\n"
+            "   dark fantasy orchestral horror\n\n"
+            "2. Choose a Base style if you have one that matches the idea.\n\n"
+            "3. Keep Mode on Coherent for sensible outputs.\n\n"
+            "4. Set Cohesion high, usually 80-100%, if you want the result to stay close to the chosen style.\n\n"
+            "5. Set Mutation / Weirdness low, around 0-15%, if you want small variations rather than wild genre jumps.\n\n"
+            "6. Click Generate.\n\n"
+            "7. Copy the Main prompt into Suno.\n\n"
+            "8. If you want exclusions, copy the separate Negative prompt into Suno's negative prompt field.\n\n"
+            "Main Prompt vs Negative Prompt\n"
+            "------------------------------\n"
+            "The Main prompt contains only the positive musical direction you want Suno to follow.\n\n"
+            "The Negative prompt is separate. It contains things to avoid, such as unwanted genres, instruments, or vocal styles.\n\n"
+            "Important: the app intentionally does NOT add avoid instructions to the main prompt. Suno has a separate negative prompt field, so avoid/exclusion material is kept separate.\n\n"
+            "The negative prompt can come from three places:\n"
+            "- What you type in Negative prompt / never include.\n"
+            "- Avoid terms from the database.\n"
+            "- Exclusions from the selected base style or blended styles.\n\n"
+            "Example negative prompt input:\n"
+            "bagpipes, ukulele, accordion\n"
+            "no EDM drops; without comedy vocals\n\n"
+            "When you edit the negative prompt, the app keeps the current generated prompt stable and only removes matching generated items. It does not re-roll the whole prompt just because you typed a new exclusion.\n\n"
+            "Base Prompt\n"
+            "-----------\n"
+            "The Base prompt is your starting text. It is always kept at the front of the generated main prompt.\n\n"
+            "Examples:\n"
+            "- 2000s r&b\n"
+            "- cinematic thrash metal\n"
+            "- gothic orchestral horror\n"
+            "- western synthwave\n\n"
+            "Use this when you already know the core idea and want the app to add extra detail.\n\n"
+            "Append Extras to Base Prompt\n"
+            "----------------------------\n"
+            "When enabled, the app treats your Base prompt as the core identity and mainly appends instruments, moods, playing directions, vocals, eras, and production notes.\n\n"
+            "This prevents the generator from stuffing too many extra genre names into the main prompt when you already typed the genre yourself.\n\n"
+            "Example with Append enabled:\n"
+            "2000s r&b; featuring warm bass, soft pads; smooth falsetto; polished radio mix\n\n"
+            "Example with Append disabled:\n"
+            "2000s r&b; neo-soul, trip-hop, acid jazz; featuring warm bass, soft pads...\n\n"
+            "Recommendation: keep Append Extras enabled when using a clear starting prompt. Turn it off when you want a fuller genre mashup.\n\n"
+            "Base Style\n"
+            "----------\n"
+            "A Base style is an association profile. It tells the app which musical ingredients usually belong together.\n\n"
+            "A base style can define:\n"
+            "- genres\n"
+            "- instruments\n"
+            "- playing directions\n"
+            "- moods\n"
+            "- eras\n"
+            "- vocals\n"
+            "- production notes\n"
+            "- exclusions\n"
+            "- mutation candidates\n\n"
+            "Example: an Industrial Metal Core base style may favour palm-muted guitars, mechanical rhythms, synth bass, dark cyberpunk moods, and punchy drums, while excluding folk instruments like accordion or tin whistle.\n\n"
+            "Use Association Engine\n"
+            "----------------------\n"
+            "This is the main smart-generation switch.\n\n"
+            "When enabled, the app uses base styles, blend styles, source filters, exclusions, mutation candidates, and weighted association pools.\n\n"
+            "When disabled, the app behaves more like a flat randomiser and pulls from the plain database lists.\n\n"
+            "Recommendation: leave this enabled for most work. Turn it off only when you deliberately want old-school random behaviour.\n\n"
+            "Mode\n"
+            "----\n"
+            "Mode changes the generator's behaviour profile.\n\n"
+            "Coherent:\n"
+            "Best for controlled, musically sensible outputs. It favours the selected base style and reduces weirdness.\n\n"
+            "Experimental:\n"
+            "Still uses the association engine, but pushes harder into mutation candidates and adjacent styles. Use this when Coherent feels too safe.\n\n"
+            "Chaos:\n"
+            "Ignores the association engine and pulls broadly from the database. Use this for deliberately strange, surprising, or absurd combinations.\n\n"
+            "Focused:\n"
+            "Keeps the output shorter and more tightly focused. Useful when Suno seems to struggle with longer prompts.\n\n"
+            "Dense:\n"
+            "Adds more ingredients. Useful for cinematic, trailer, progressive, maximalist, or heavily layered ideas.\n\n"
+            "Mode vs Use Association Engine\n"
+            "------------------------------\n"
+            "Use Association Engine decides whether smart style associations are available.\n\n"
+            "Mode decides how the generator behaves.\n\n"
+            "So:\n"
+            "- Association Engine ON + Coherent = smart, controlled prompt.\n"
+            "- Association Engine ON + Experimental = smart, but more adventurous.\n"
+            "- Chaos mode = deliberately ignores associations.\n"
+            "- Association Engine OFF = mostly flat database randomisation.\n\n"
+            "Cohesion\n"
+            "--------\n"
+            "Cohesion controls how strongly the generator follows the selected base style, blend styles, or source filter.\n\n"
+            "High cohesion, 80-100%:\n"
+            "More faithful, less random, better for genre-specific outputs.\n\n"
+            "Medium cohesion, 40-70%:\n"
+            "Allows more cross-pollination while keeping some identity.\n\n"
+            "Low cohesion, 0-30%:\n"
+            "More unpredictable and less faithful.\n\n"
+            "For strict style control, use Coherent mode, Cohesion 100%, Mutation 0%, and enable Prompt Source Filter.\n\n"
+            "Mutation / Weirdness\n"
+            "--------------------\n"
+            "Mutation controls how much the app uses mutation candidates from associations.\n\n"
+            "0%:\n"
+            "No mutation candidates should be used.\n\n"
+            "5-15%:\n"
+            "Small, subtle variation.\n\n"
+            "25-50%:\n"
+            "Noticeable crossover influence.\n\n"
+            "75-100%:\n"
+            "Very strange or heavily hybridised results.\n\n"
+            "If unrelated styles are appearing, reduce Mutation and use the Prompt Source Filter.\n\n"
+            "Allow Unlikely / Excluded Pairings\n"
+            "----------------------------------\n"
+            "When disabled, the app respects exclusions defined in the selected base style or blended styles.\n\n"
+            "When enabled, excluded items may appear again.\n\n"
+            "Recommendation: keep this disabled for controlled work. Enable it only for chaos or deliberate rule-breaking.\n\n"
+            "Keep Base Style Represented\n"
+            "---------------------------\n"
+            "This forces the selected base style's core genre to remain represented in the output.\n\n"
+            "Use it when you want to make sure the prompt stays rooted in the selected base style, even when other settings introduce variation.\n\n"
+            "Example: if Base Style is Thrash / Groove Metal Core, the generator tries to keep that core metal identity present.\n\n"
+            "Blend Multiple Base Styles\n"
+            "--------------------------\n"
+            "Blend mode actively combines several selected base styles into one prompt.\n\n"
+            "Use this when you want to create something that is genuinely a mixture of X and Y.\n\n"
+            "Examples:\n"
+            "- Industrial Metal Core + Dark Cathedral Horror\n"
+            "- Grunge Rock Expansion + Shoegaze / Dream Pop\n"
+            "- Thrash / Groove Metal Core + Cinematic Orchestral\n\n"
+            "Each selected style has a weight slider.\n\n"
+            "Higher weight means that style contributes more strongly to the blend.\n\n"
+            "Weight 0 effectively disables that style for the blend.\n\n"
+            "Example:\n"
+            "Industrial Metal Core: 80%\n"
+            "Dark Cathedral Horror: 20%\n\n"
+            "This should produce something mostly industrial metal with a smaller gothic/cinematic horror influence.\n\n"
+            "Prompt Source Filter\n"
+            "--------------------\n"
+            "Prompt Source Filter is different from Blend.\n\n"
+            "Blend says: actively mix these styles.\n\n"
+            "Source Filter says: only allow the generator to draw from these selected style pools.\n\n"
+            "Think of it like this:\n"
+            "- Blend = the recipe.\n"
+            "- Source Filter = the allowed pantry.\n\n"
+            "Use Source Filter when you want to prevent unrelated genre bleed.\n\n"
+            "Example:\n"
+            "You want a controlled prompt using only thrash metal, grunge, and cinematic material.\n\n"
+            "Enable Prompt Source Filter and select only:\n"
+            "- Thrash / Groove Metal Core\n"
+            "- Grunge Rock Expansion\n"
+            "- Cinematic Orchestral / Trailer style\n\n"
+            "The generator will then ignore unrelated pools such as folk, bluegrass, amapiano, Australian tribal, or other unselected categories.\n\n"
+            "Can Blend and Source Filter Be Used Together?\n"
+            "---------------------------------------------\n"
+            "Yes. This is often the best controlled workflow.\n\n"
+            "Use Blend to define what styles are actively being mixed.\n\n"
+            "Use Source Filter to define the broader allowed neighbourhood.\n\n"
+            "Example:\n"
+            "Blend:\n"
+            "- Industrial Metal Core 70%\n"
+            "- Dark Cathedral Horror 30%\n\n"
+            "Source Filter:\n"
+            "- Industrial Metal Core\n"
+            "- Dark Cathedral Horror\n"
+            "- Dark Ambient / Dungeon Synth\n\n"
+            "This means the prompt actively blends industrial metal and cathedral horror, but any extra fallback material can only come from the selected dark/cinematic family.\n\n"
+            "Strict No-Bleed Settings\n"
+            "------------------------\n"
+            "If you want maximum control and do not want unrelated genres appearing:\n\n"
+            "Mode: Coherent\n"
+            "Use Association Engine: On\n"
+            "Cohesion: 100%\n"
+            "Mutation / Weirdness: 0%\n"
+            "Allow Excluded Pairings: Off\n"
+            "Prompt Source Filter: On\n"
+            "Select only the allowed base styles\n\n"
+            "This is the safest setup for avoiding unwanted bleed.\n\n"
+            "Ingredient Counts\n"
+            "-----------------\n"
+            "These controls determine how many items are generated for each category.\n\n"
+            "Extra Genres:\n"
+            "How many genre labels the app adds, unless Append Extras suppresses them.\n\n"
+            "Instruments:\n"
+            "How many instruments or sound sources are added.\n\n"
+            "Playing Directions:\n"
+            "Performance, rhythm, or arrangement behaviour.\n\n"
+            "Moods:\n"
+            "Emotional or cinematic tone.\n\n"
+            "Era / Texture:\n"
+            "Production era, recording style, or historical flavour.\n\n"
+            "Vocals:\n"
+            "Vocal style or delivery.\n\n"
+            "Production Notes:\n"
+            "Mix, mastering, ambience, and sonic treatment.\n\n"
+            "Avoid / Negative:\n"
+            "How many avoid terms are pulled into the separate negative prompt.\n\n"
+            "Prompt Variants\n"
+            "---------------\n"
+            "Generate Variants creates 3-5 prompts using the current locked-in settings.\n\n"
+            "This is useful when you like the current direction but want several slight alternatives to try in Suno.\n\n"
+            "The app temporarily generates variant prompts, then restores your current main prompt, negative prompt, breakdown, and history.\n\n"
+            "Each variant is shown as a separate block with:\n"
+            "- MAIN PROMPT\n"
+            "- NEGATIVE PROMPT\n\n"
+            "Favourite Prompts\n"
+            "-----------------\n"
+            "Favourite prompts are long-term saved prompts that persist between app sessions.\n\n"
+            "Use Save Favourite under the Main prompt when you generate something worth keeping.\n\n"
+            "The Favourites tab lets you restore, copy, delete, import, and export saved prompts.\n\n"
+            "Favourites are separate from Prompt History. History is temporary and limited to the last 10 generated prompts. Favourites are for prompts you deliberately want to reuse later.\n\n"
+            "Prompt History\n"
+            "--------------\n"
+            "The app keeps the last 10 generated prompts in the Prompt History panel.\n\n"
+            "Use this if you accidentally generate over something you liked.\n\n"
+            "You can restore or copy a previous prompt.\n\n"
+            "Clear / Reset Prompts\n"
+            "---------------------\n"
+            "Clear / Reset Prompts clears the working area:\n"
+            "- base prompt\n"
+            "- negative prompt\n"
+            "- main output\n"
+            "- negative output\n"
+            "- breakdown\n"
+            "- prompt history\n"
+            "- variants\n\n"
+            "It does not delete or reset the database.\n\n"
+            "Saved Settings\n"
+            "--------------\n"
+            "The app remembers generation preferences between sessions.\n\n"
+            "Saved settings include things like:\n"
+            "- mode\n"
+            "- cohesion\n"
+            "- mutation / weirdness\n"
+            "- base style\n"
+            "- blend mode and blend weights\n"
+            "- source filter selections\n"
+            "- ingredient counts\n"
+            "- max characters\n\n"
+            "The app does not save temporary working prompts as preferences.\n\n"
+            "Reset Generation Settings to Defaults\n"
+            "--------------------------------------\n"
+            "This resets your saved generation preferences back to the app defaults.\n\n"
+            "It does not wipe your database, import packs, associations, or custom genres.\n\n"
+            "Database\n"
+            "--------\n"
+            "The database contains the raw ingredient lists:\n"
+            "- genres\n"
+            "- instruments\n"
+            "- playing\n"
+            "- moods\n"
+            "- eras\n"
+            "- vocals\n"
+            "- production\n"
+            "- avoid\n\n"
+            "The associations/base styles draw from these lists.\n\n"
+            "When you save or import associations, missing values are synced into the database automatically.\n\n"
+            "Associations\n"
+            "------------\n"
+            "Associations define reusable base styles.\n\n"
+            "Use the Associations tab to create or edit base styles manually.\n\n"
+            "Each association can define normal ingredients, exclusions, and mutation candidates.\n\n"
+            "Import Packs\n"
+            "------------\n"
+            "Import Packs are the easiest way to add many styles at once.\n\n"
+            "An import pack is JSON that contains one or more association profiles.\n\n"
+            "When imported, the app:\n"
+            "- creates or updates the association\n"
+            "- syncs missing values into the database\n"
+            "- skips duplicates\n"
+            "- saves the updated database\n\n"
+            "This is the recommended way to expand the app using GPT-generated style packs.\n\n"
+            "Python / iOS Sync\n"
+            "-----------------\n"
+            "The Python and iOS versions are designed to share compatible JSON structures.\n\n"
+            "Use full database export/import when you want both versions to have the same complete data.\n\n"
+            "Use pack export/import when you only want to move base styles/associations.\n\n"
+            "Recommended Settings\n"
+            "--------------------\n"
+            "For controlled style expansion:\n"
+            "Mode: Coherent\n"
+            "Cohesion: 80-100%\n"
+            "Mutation: 0-15%\n"
+            "Use Association Engine: On\n"
+            "Allow Excluded Pairings: Off\n\n"
+            "For experimental but still usable hybrids:\n"
+            "Mode: Experimental\n"
+            "Cohesion: 50-75%\n"
+            "Mutation: 25-50%\n"
+            "Use Association Engine: On\n\n"
+            "For complete madness:\n"
+            "Mode: Chaos\n"
+            "Cohesion: any\n"
+            "Mutation: high\n"
+            "Use Source Filter only if you want chaos inside a limited musical neighbourhood.\n\n"
+            "For strict genre locking:\n"
+            "Mode: Coherent\n"
+            "Cohesion: 100%\n"
+            "Mutation: 0%\n"
+            "Prompt Source Filter: On\n"
+            "Select only the allowed source styles\n\n"
+            "Practical Tips\n"
+            "--------------\n"
+            "- Use Base Prompt when you already know the idea.\n"
+            "- Use Base Style when you want the app to understand the musical DNA.\n"
+            "- Use Blend when you want a deliberate hybrid.\n"
+            "- Use Source Filter when you want to prevent genre bleed.\n"
+            "- Use Negative Prompt when certain instruments or styles keep appearing unwanted.\n"
+            "- Use Variants when you like the current direction and want several nearby alternatives.\n"
+            "- Use Import Packs to grow the app quickly.\n\n"
+            "Troubleshooting\n"
+            "---------------\n"
+            "Problem: unrelated genres appear.\n"
+            "Solution: enable Prompt Source Filter, set Cohesion to 100%, Mutation to 0%, and disable Allow Excluded Pairings.\n\n"
+            "Problem: prompts feel too samey.\n"
+            "Solution: increase Mutation, lower Cohesion slightly, or switch to Experimental mode.\n\n"
+            "Problem: prompts are too long.\n"
+            "Solution: lower ingredient counts or use Focused mode.\n\n"
+            "Problem: the app keeps using things you dislike.\n"
+            "Solution: add them to the Negative prompt or to association exclusions.\n\n"
+            "Problem: the app does not use a new style from an association.\n"
+            "Solution: use Sync All Associations to Database or save the association again. The app normally syncs missing values automatically.\n\n"
+            "Final Note\n"
+            "----------\n"
+            "Suno Style Mishmasher is best used as a creative assistant, not a rulebook. Some strange combinations will fail, but some will lead to interesting results you would not have written manually.\n"
+
         )
+
         layout.addWidget(help_text)
         return page
 
@@ -2070,6 +2920,8 @@ class Mishmasher(QMainWindow):
                 self.base_style_combo.setCurrentIndex(index)
         self.base_style_combo.blockSignals(False)
 
+        if hasattr(self, "setup_base_style_completer"):
+            self.setup_base_style_completer()
         if hasattr(self, "rebuild_blend_style_controls"):
             self.rebuild_blend_style_controls()
         if hasattr(self, "refresh_source_styles_list"):
@@ -2522,6 +3374,160 @@ class Mishmasher(QMainWindow):
         path, _ = QFileDialog.getSaveFileName(self, "Export database", "suno_style_database.json", "JSON Files (*.json)")
         if path:
             Path(path).write_text(json.dumps(self.db, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+    def load_saved_settings(self) -> GeneratorSettings:
+        """Load persistent generator settings, falling back safely to defaults."""
+        if not PRESET_PATH.exists():
+            return GeneratorSettings()
+
+        try:
+            data = json.loads(PRESET_PATH.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                return GeneratorSettings()
+
+            defaults = asdict(GeneratorSettings())
+            merged = {**defaults, **data}
+
+            # Prompts are working text, not preference settings.
+            merged["base_prompt"] = ""
+            merged["negative_prompt"] = ""
+
+            return GeneratorSettings(**merged)
+        except Exception:
+            return GeneratorSettings()
+
+    def save_settings(self, settings: GeneratorSettings | None = None) -> None:
+        """Persist generator controls between sessions.
+
+        This intentionally does not save generated prompts, prompt history, base prompt text,
+        or negative prompt text. It saves the user's preferred controls only.
+        """
+        if getattr(self, "_loading_settings", False):
+            return
+
+        try:
+            settings = settings or self.collect_settings()
+            data = asdict(settings)
+            data["base_prompt"] = ""
+            data["negative_prompt"] = ""
+            APP_DIR.mkdir(parents=True, exist_ok=True)
+            PRESET_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+        except Exception:
+            # Settings persistence should never interrupt prompt generation.
+            pass
+
+    def reset_generation_settings_to_defaults(self) -> None:
+        default_settings = GeneratorSettings()
+        self.apply_settings_to_ui(default_settings)
+        try:
+            if PRESET_PATH.exists():
+                PRESET_PATH.unlink()
+        except Exception:
+            pass
+        self.generate_prompt()
+        self.save_settings(default_settings)
+        self.statusBar().showMessage("Generation settings reset to defaults", 2500)
+
+    def apply_settings_to_ui(self, settings: GeneratorSettings) -> None:
+        """Apply saved/default settings to existing widgets without causing a signal storm."""
+        self._loading_settings = True
+        try:
+            def set_combo(combo, value: str) -> None:
+                if combo is None:
+                    return
+                index = combo.findText(value)
+                combo.blockSignals(True)
+                combo.setCurrentIndex(index if index >= 0 else 0)
+                combo.blockSignals(False)
+
+            set_combo(getattr(self, "mode_combo", None), settings.mode)
+            set_combo(getattr(self, "base_style_combo", None), settings.base_style)
+
+            if hasattr(self, "use_assoc_check"):
+                self.use_assoc_check.blockSignals(True)
+                self.use_assoc_check.setChecked(settings.use_associations)
+                self.use_assoc_check.blockSignals(False)
+            if hasattr(self, "auto_match_check"):
+                self.auto_match_check.blockSignals(True)
+                self.auto_match_check.setChecked(settings.auto_match_base_style)
+                self.auto_match_check.blockSignals(False)
+            if hasattr(self, "simple_append_check"):
+                self.simple_append_check.blockSignals(True)
+                self.simple_append_check.setChecked(settings.simple_append_only)
+                self.simple_append_check.blockSignals(False)
+            if hasattr(self, "allow_excluded_check"):
+                self.allow_excluded_check.blockSignals(True)
+                self.allow_excluded_check.setChecked(settings.allow_excluded)
+                self.allow_excluded_check.blockSignals(False)
+            if hasattr(self, "lock_base_genre_check"):
+                self.lock_base_genre_check.blockSignals(True)
+                self.lock_base_genre_check.setChecked(settings.lock_base_genre)
+                self.lock_base_genre_check.blockSignals(False)
+            if hasattr(self, "blend_enabled_check"):
+                self.blend_enabled_check.blockSignals(True)
+                self.blend_enabled_check.setChecked(settings.blend_enabled)
+                self.blend_enabled_check.blockSignals(False)
+            if hasattr(self, "source_filter_enabled_check"):
+                self.source_filter_enabled_check.blockSignals(True)
+                self.source_filter_enabled_check.setChecked(settings.source_filter_enabled)
+                self.source_filter_enabled_check.blockSignals(False)
+
+            for widget_name, value in [
+                ("cohesion_spin", settings.cohesion),
+                ("weirdness_spin", settings.weirdness),
+                ("max_chars_spin", settings.max_chars),
+            ]:
+                if hasattr(self, widget_name):
+                    widget = getattr(self, widget_name)
+                    widget.blockSignals(True)
+                    widget.setValue(value)
+                    widget.blockSignals(False)
+
+            if hasattr(self, "seed_box"):
+                self.seed_box.blockSignals(True)
+                self.seed_box.setText(settings.seed)
+                self.seed_box.blockSignals(False)
+
+            if hasattr(self, "count_spins"):
+                count_values = {
+                    "genre_count": settings.genre_count,
+                    "instrument_count": settings.instrument_count,
+                    "playing_count": settings.playing_count,
+                    "mood_count": settings.mood_count,
+                    "era_count": settings.era_count,
+                    "vocal_count": settings.vocal_count,
+                    "production_count": settings.production_count,
+                    "avoid_count": settings.avoid_count,
+                }
+                for key, value in count_values.items():
+                    if key in self.count_spins:
+                        self.count_spins[key].blockSignals(True)
+                        self.count_spins[key].setValue(value)
+                        self.count_spins[key].blockSignals(False)
+
+            if hasattr(self, "blend_style_checks"):
+                selected = set(settings.blend_styles)
+                weights = settings.blend_weights or {}
+                for name, check in self.blend_style_checks.items():
+                    check.blockSignals(True)
+                    check.setChecked(name in selected)
+                    check.blockSignals(False)
+                for name, spin in self.blend_style_weights.items():
+                    spin.blockSignals(True)
+                    spin.setValue(int(weights.get(name, 50)))
+                    spin.blockSignals(False)
+
+            if hasattr(self, "source_styles_list"):
+                wanted = set(settings.source_styles)
+                self.source_styles_list.blockSignals(True)
+                for i in range(self.source_styles_list.count()):
+                    item = self.source_styles_list.item(i)
+                    item.setSelected(item.text() in wanted)
+                self.source_styles_list.blockSignals(False)
+
+        finally:
+            self._loading_settings = False
 
     def collect_settings(self) -> GeneratorSettings:
         return GeneratorSettings(
@@ -3263,6 +4269,7 @@ class Mishmasher(QMainWindow):
             return
 
         settings = self.collect_settings()
+        self.save_settings(settings)
         rng = self.rng(settings)
 
         # Style bundles are legacy presets. The simplified generator uses associations/base styles
@@ -3458,10 +4465,132 @@ class Mishmasher(QMainWindow):
             self.breakdown.clear()
         if hasattr(self, "history_list"):
             self.clear_prompt_history()
+        if hasattr(self, "variants_output"):
+            self.variants_output.clear()
         self._last_generated_picked = None
         self._last_generation_settings = None
         self.update_count()
         self.statusBar().showMessage("Prompt workspace cleared", 2500)
+
+
+    def generate_prompt_variants(self) -> None:
+        """Generate 3-5 close variations using the current locked-in settings.
+
+        This temporarily re-runs the existing generator with variant-specific seeds,
+        collects the outputs, then restores the current visible prompt and state.
+        """
+        if not hasattr(self, "variant_count_spin"):
+            return
+
+        count = self.variant_count_spin.value()
+
+        original_seed = self.seed_box.text() if hasattr(self, "seed_box") else ""
+        original_main = self.output.toPlainText() if hasattr(self, "output") else ""
+        original_negative = self.negative_output.toPlainText() if hasattr(self, "negative_output") else ""
+        original_breakdown = self.breakdown.toPlainText() if hasattr(self, "breakdown") else ""
+        original_history = list(self.prompt_history)
+        original_last_picked = {k: list(v) for k, v in self._last_generated_picked.items()} if isinstance(self._last_generated_picked, dict) else None
+        original_last_settings = self._last_generation_settings
+        original_removed = list(self._last_generation_removed_by_negative)
+
+        base_seed = original_seed.strip()
+        if not base_seed:
+            # Create a temporary seed anchor so the 3-5 variants are all different,
+            # but still generated from the same locked-in settings.
+            base_seed = f"variant-batch-{random.randint(1, 999999999)}"
+
+        variants: List[str] = []
+
+        try:
+            for index in range(1, count + 1):
+                variant_seed = f"{base_seed}::{index}"
+
+                if hasattr(self, "seed_box"):
+                    self.seed_box.blockSignals(True)
+                    self.seed_box.setText(variant_seed)
+                    self.seed_box.blockSignals(False)
+
+                self.generate_prompt()
+
+                main_prompt = self.output.toPlainText().strip() if hasattr(self, "output") else ""
+                negative_prompt = self.negative_output.toPlainText().strip() if hasattr(self, "negative_output") else ""
+
+                block_lines = [
+
+
+                    f"========== VARIANT {index} ==========",
+
+
+                    "",
+
+
+                    "MAIN PROMPT",
+
+
+                    main_prompt,
+
+
+                ]
+
+
+
+                if negative_prompt:
+
+
+                    block_lines.extend([
+
+
+                        "",
+
+
+                        "NEGATIVE PROMPT",
+
+
+                        negative_prompt,
+
+
+                    ])
+
+
+
+                variants.append("\n".join(block_lines))
+
+        finally:
+            if hasattr(self, "seed_box"):
+                self.seed_box.blockSignals(True)
+                self.seed_box.setText(original_seed)
+                self.seed_box.blockSignals(False)
+
+            if hasattr(self, "output"):
+                self.output.blockSignals(True)
+                self.output.setPlainText(original_main)
+                self.output.blockSignals(False)
+
+            if hasattr(self, "negative_output"):
+                self.negative_output.blockSignals(True)
+                self.negative_output.setPlainText(original_negative)
+                self.negative_output.blockSignals(False)
+
+            if hasattr(self, "breakdown"):
+                self.breakdown.setPlainText(original_breakdown)
+
+            self.prompt_history = original_history
+            self.refresh_history_list()
+            self._last_generated_picked = original_last_picked
+            self._last_generation_settings = original_last_settings
+            self._last_generation_removed_by_negative = original_removed
+            self.update_count()
+
+        if hasattr(self, "variants_output"):
+            self.variants_output.setPlainText("\n\n----------------------------------------\n\n".join(variants))
+
+        self.statusBar().showMessage(f"Generated {count} prompt variants", 2500)
+
+    def copy_variants(self) -> None:
+        if not hasattr(self, "variants_output"):
+            return
+        QGuiApplication.clipboard().setText(self.variants_output.toPlainText())
+        self.statusBar().showMessage("Copied variants to clipboard", 2500)
 
     def copy_prompt(self) -> None:
         QGuiApplication.clipboard().setText(self.output.toPlainText())
